@@ -13,13 +13,13 @@ jupyter: python3
 
 # Introduction
 
-Distributed Denial of Service (DDoS) attacks are a significant threat to the modern internet. These attacks aim to disrupt the normal traffic of a server or network infrastructure by overwhelming it with a flood of network traffic coming from malicious or compromised systems. These attacks are very frequent and sophisticated at the same time. In 2023, there were more than 13 million DDoS attacks reported globally (@netscout2024). These attacks can cause long service outages and lead to serious financial losses for businesses in all industries. This project analyzes a public DDoS dataset to identify prevalent attack vectors, differentiate malicious traffic characteristics, and explore attack patterns related to time and protocol. The ultimate goal is to improve our understanding of DDoS attack dynamics and contribute to the development of effective yet simpler cybersecurity strategies for such attacks.
+Distributed Denial of Service (DDoS) attacks are a significant threat to the modern internet. These attacks aim to disrupt the normal traffic of a server or network infrastructure by overwhelming it with a flood of network traffic coming from malicious or compromised systems. These attacks are very frequent and sophisticated at the same time. In 2023, there were more than 13 million DDoS attacks reported globally [@netscout2024]. These attacks can cause long service outages and lead to serious financial losses for businesses in all industries. This project analyzes a public DDoS dataset to identify prevalent attack vectors, differentiate malicious traffic characteristics, and explore attack patterns related to time and protocol. The ultimate goal is to improve our understanding of DDoS attack dynamics and contribute to the development of effective yet simpler cybersecurity strategies for such attacks.
 
 # Dataset
 
-The dataset I plan to use for this project is the "DDoS 2019" (@sharafaldin19) dataset provided by the Canadian Institute for Cybersecurity (CIC) at the University of New Brunswick.
+The dataset I plan to use for this project is the "DDoS 2019" [@sharafaldin19] dataset provided by the Canadian Institute for Cybersecurity (CIC) at the University of New Brunswick.
 
-The dataset can be downloaded directly from the CIC website. As per the CIC, the dataset was created in a realistic network environment. The data was captured in CSV format and includes network traffic features extracted from packet captures using the CICFlowMeter tool (@sharafaldin19). The dataset contains various types of DDoS attacks as well as benign traffic. The following variables are intended to be used in the analysis:
+The dataset can be downloaded directly from the CIC website. As per the CIC, the dataset was created in a realistic network environment. The data was captured in CSV format and includes network traffic features extracted from packet captures using the CICFlowMeter tool [@sharafaldin19]. The dataset contains various types of DDoS attacks as well as benign traffic. The following variables are intended to be used in the analysis:
 
 
 * Flow Duration: Duration of the network flow (nanoseconds)
