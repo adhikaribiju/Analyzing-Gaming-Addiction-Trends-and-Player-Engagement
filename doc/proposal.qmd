@@ -1,7 +1,7 @@
 ---
-title: "Proposal: [Your project name]"
+title: "Proposal: Analyzing DDoS Attack Patterns for Improved Detection"
 subtitle: "DATA 450 Capstone"
-author: "[Your Name]"
+author: "Bijay Adhikari"
 date: today
 date-format: long
 bibliography: references.bib
@@ -13,68 +13,80 @@ jupyter: python3
 
 # Introduction
 
-[This section should contain background and introduction to your general topic.]
+Distributed Denial of Service (DDoS) attacks are a significant threat to the modern internet. These attacks aim to disrupt the normal traffic of a server or network infrastructure by overwhelming it with a flood of network traffic coming from malicious or compromised systems. These attacks are very frequent and sophisticated at the same time. In 2023, there were more than 13 million DDoS attacks reported globally (@netscout2024). These attacks can cause long service outages and lead to serious financial losses for businesses in all industries. This project analyzes a public DDoS dataset to identify prevalent attack vectors, differentiate malicious traffic characteristics, and explore attack patterns related to time and protocol. The ultimate goal is to improve our understanding of DDoS attack dynamics and contribute to the development of effective yet simpler cybersecurity strategies for such attacks.
 
 # Dataset
 
-[In this section, desribe the dataset(s). This includes things like where you
-obtained the dataset. Include a full citation, as specified 
-[here](https://guides.lib.umich.edu/c.php?g=282964&p=3285995). Describe how the
-data was obtained by the data owner/curator, as best as you can. List the 
-variables that you plan to use in your analysis, for example:
+The dataset I plan to use for this project is the "DDoS 2019" (@sharafaldin19) dataset provided by the Canadian Institute for Cybersecurity (CIC) at the University of New Brunswick.
 
-* weight: The patient's weight (kg)
-* sex: The patient's sex, male or female
-* age: The patient's age (months)
+The dataset can be downloaded directly from the CIC website. As per the CIC, the dataset was created in a realistic network environment. The data was captured in CSV format and includes network traffic features extracted from packet captures using the CICFlowMeter tool (@sharafaldin19). The dataset contains various types of DDoS attacks as well as benign traffic. The following variables are intended to be used in the analysis:
 
-]
+
+* Flow Duration: Duration of the network flow (nanoseconds)
+* Total Fwd Packets: Total number of packets sent in the forward direction
+* Total Backward Packets: Total number of packets sent in the backward direction
+* Flow Bytes/s: Number of bytes per second within a flow
+* Flow Packets/s: Number of packets per second within a flow
+* Protocol: Protocol used (e.g., TCP, UDP, ICMP)
+* Packet Length Mean: Average length of packets in a flow
+* Label: Classification of the flow (Benign or DDoS type)
+
 
 # Data Acquisition and Processing
 
-[In this section, if applicable, describe how you will obtain the data (if it's
-anything more complicated than a simple download). Discuss what data 
-processing steps will be needed, such as recoding variables, data cleaning,
-data tidying, imputing missing values, etc. See sections 1c, 1d, 1e in the 
-"Good Enough Practices" paper.]
+The data can be obtained by downloading the dataset directly from the CIC's website. The first step in processing will involve exploring the dataset to understand its structure, data types, and to identify any missing values. For the data cleaning, missing values will be checked and handled appropriately. This may involve imputation, such as using the mean or median for numerical features or the mode for categorical features, or the removal of rows with excessive missing data. Once missing values are addressed, the next step will be to ensure that all columns have the correct data types, with numerical features properly formatted and categorical features correctly encoded. The dataset will also be examined for infinite or NaN values. If any additional categorical features beyond 'Protocol' and 'Label' are found relevant, they will be numerically encoded, using techniques like one-hot encoding if necessary.
+
 
 # Research Questions and Methodology
 
-[In this section, list each of the questions you will explore. Following each
-question, provide a detailed and specific plan for how you plan to answer the 
-question. Include the specific steps you will take, what form the answer will 
-take (a number? table? visualization? model? Give all the specifics), and 
-estimate how many hours each question will take to complete.]
 
-1. Is smoking correlated with diabetes? To answer this, I will create a filled
-bar plot, with the left bar representing non-smokers, the middle bar
-representing people who smoke moderately, and the right bar representing heavy
-smokers. The bars will be the same height, and each bar will be
-colored two colors based on the proportion of patients in the group who do or
-do not have diabetes.
+1. Which DDoS vectors (UDP flood, HTTP flood, etc.) appear most frequently in the dataset? To answer this, I will filter the dataset for DDoS attacks, and count the occurrences of each DDoS attack vector from the 'Label' column. I will then normalize these counts to percentages and visualize the results using a bar chart, with each bar representing a DDoS vector and the height representing its frequency.
 
-2. Question 2? Plan for question 2.
+Estimated Time: 2 hours
 
-3. Question 3? Plan for question 3.
 
-4. etc.
+2. How do packet size, flow duration, and protocol usage differ between DDoS and benign flows? To answer this, I will select features like 'Fwd Packet Length Mean', 'Flow Duration', and 'Protocol'. I will create subsets for benign and DDoS flows. For packet size and flow duration, I will calculate descriptive statistics, visualize distributions using box and violin plots, and perform statistical tests. For 'Protocol', I will calculate and visualize frequency distributions for both flow types using side-by-side bar charts.
+
+Estimated Time: 5 hours
+
+
+3. Are attacks more likely at certain times of day or under specific network conditions? To answer this, for the time of day, I will extract the 'hour of day', group data by hour and calculate the DDoS proportion per hour. I will visualize it with a line chart. For network conditions, if a proxy like 'Flow Bytes/s' is available, I will correlate the hourly network load with the hourly DDoS proportion.
+
+Estimated Time: 5 hours
+
+
+
+4. Which features (e.g., packet rates, flow bytes/s) might be the strongest indicators of an ongoing DDoS? To answer this, I will select relevant features and train a Random Forest or Logistic Regression classifier to predict DDoS attacks. I will then extract feature importance scores and also calculate the correlation of each feature with the 'is_DDoS' label. Lastly, I will rank features by both importance and correlation to identify the strongest indicators.
+
+Estimated Time: 5 hours
+
+5. Does TCP or UDP dominate in these attacks, and does one protocol create significantly different traffic signatures? To answer this, for protocol dominance, I will filter for TCP and UDP flows separately, calculate the DDoS proportion within each protocol group, and visualize it using a bar chart. For traffic signatures, I will compare the distributions of key features for TCP DDoS and UDP DDoS flows using box and violin plots.
+
+Estimated Time: 3 hours
+
+
 
 # Work plan
 
-[Fill in the list below with a plan for what you will do each week, starting 2/10. You should
-have around 7 hours worth of work each week. Writing work counts. Several tasks
-have already been filled in for you.]
+**Week 4 (2/10 - 2/16):**
 
-**Week 4 (2/10 - 2/16):** [Just an example: 
-
-* Data tidying and recoding (4 hours)
-* Question 2 (4 hours).]
+* Data cleaning and merging (4 hours)
+* Exploratory Data Analysis (EDA) (3 hours)
 
 **Week 5 (2/17 - 2/23):**
 
+* Address missing values and normalize data (3 hours)
+* Answer Question 1(4 hours)
+
 **Week 6 (2/24 - 3/2):**
+
+* Answer Question 2 (5 hours)
+* Begin Question 3 (5 hours)
 
 **Week 7 (3/3 - 3/9):**
 
+* Complete Question 3 (3 hours)
+* Start building the Random Forest model for Question 4 (4 hours)
 * Presentation prep and practice (4 hours)
 
 **Week 8 (3/10 - 3/16):** *Presentations given on Wed-Thu 3/12-3/13.*
@@ -85,70 +97,36 @@ have already been filled in for you.]
 **Week 9 (3/24 - 3/30):** *Poster Draft 1 due Monday morning 3/24 at 9am. Poster Draft 2 due Sunday night 3/30.*
 
 * Peer feedback (2 hours)
-
 * Poster revisions (1.5 hours)
 
 **Week 10 (3/31 - 4/6):** *Final Poster due Sunday 4/6.*
 
 * Peer feedback (1.5 hours)
-
 * Poster revisions (2 hours)
 
 **Week 11 (4/7 - 4/13):**
 
+* Validate models with cross-validation (2 hours).
+
 **Week 12 (4/14 - 4/20):**
 
-**Week 13 (4/21 - 4/27):** *Blog post draft 1 due Sunday night 4/28.*
-[All project work should be done by the end of this 
-week. The remaining time will be used for writing up and presenting your results.]
+* Write blog post methods/results sections (4 hours).
 
-* Draft blog post (4 hours).
+
+**Week 13 (4/21 - 4/27):** *Blog post draft 1 due Sunday night 4/28.*
+
+* Finalize blog post (4 hours)
 
 **Week 14 (4/28 - 5/4):**
 
 * Peer feedback (3 hours)
 * Blog post revisions (4 hours)
-* [Do not schedule any other tasks for this week.]
 
 **Week 15 (5/5 - 5/8):**  *Final blog post due Tues 5/7. Blog post read-throughs during final exam slot, Thursday May 8th, 8:00-11:20am.*
 
 * Blog post revisions (2 hours)
 * Peer feedback (2 hours)
-* [Do not schedule any other tasks for this week.]
 
-## Some cool Quarto stuff
-
-[You can delete this section from your proposal.]
-
-For your reference, here's an example of a Python code cell in Quarto,
-along with a figure that gets generated, along with a caption and a label
-so that it can be referred to automatically as "Figure 1" (or whatever)
-in the writeup.
-
-For a demonstration of a line plot on a polar axis, see @fig-polar.
-
-```{python}
-#| label: fig-polar
-#| fig-cap: "A line plot on a polar axis"
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-r = np.arange(0, 2, 0.01)
-theta = 2 * np.pi * r
-fig, ax = plt.subplots(
-  subplot_kw = {'projection': 'polar'} 
-)
-ax.plot(theta, r)
-ax.set_rticks([0.5, 1, 1.5, 2])
-ax.grid(True)
-plt.show()
-```
-
-Here's an example of citing a source [see @phil99, pp. 33-35]. Be sure the source information is entered in "BibTeX" form in the `references.bib` file.
 
 # References
 
-[The bibliography will automatically get generated. Any sources you
-cite in the document will be included. Other entries in the `.bib` file
-will not be included.]
