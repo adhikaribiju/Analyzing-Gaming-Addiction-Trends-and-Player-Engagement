@@ -1,0 +1,104 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"My awesome blog\"\n",
+        "subtitle: \"Spring 2023\"\n",
+        "author: \"Prof. Yuster\"\n",
+        "bibliography: references.bib\n",
+        "nocite: |\n",
+        "  @*\n",
+        "number-sections: false\n",
+        "format:\n",
+        "  html:\n",
+        "    theme: default\n",
+        "    rendering: embed-resources\n",
+        "    code-fold: true\n",
+        "    code-tools: true\n",
+        "    toc: true\n",
+        "jupyter: python3\n",
+        "---\n",
+        "\n",
+        "\n",
+        "\n",
+        "![Source: Ramapo College of New Jersey](https://www.ramapo.edu/tours/wp-content/uploads/sites/344/2020/10/Fall-Arch-Straigh-Edit.jpg){fig-alt=\"A photo of the arch at Ramapo College.\"}\n",
+        "\n",
+        "\n",
+        "# Welcome\n",
+        "\n",
+        "\n",
+        "**Welcome** to *my* ~~super~~ SUPER awesome `blog` post!\n",
+        "$$x^2 = 1$$\n",
+        "\n",
+        "## Quarto is cool\n",
+        "\n",
+        "This section was copy/pasted from various parts of the [Quarto website](https://quarto.org/docs/get-started/hello/vscode.html).\n",
+        "\n",
+        ":::{.callout-note}\n",
+        "Note that there are five types of callouts, including:\n",
+        "`note`, `tip`, `warning`, `caution`, and `important`.\n",
+        ":::\n",
+        "\n",
+        ":::{.callout-tip}\n",
+        "## Tip With Caption\n",
+        "\n",
+        "This is an example of a callout with a caption.\n",
+        ":::\n",
+        "\n",
+        "\n",
+        "For your reference, here's an example of a Python code cell in Quarto, along with a figure that gets generated, along with a caption and a label so that it can be referred to automatically as \"Figure 1\" (or whatever) in the writeup.\n",
+        "\n",
+        "For a demonstration of a line plot on a polar axis, see @fig-polar.\n"
+      ],
+      "id": "d798fd30"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: fig-polar\n",
+        "#| fig-cap: A line plot on a polar axis\n",
+        "\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "r = np.arange(0, 2, 0.01)\n",
+        "theta = 2 * np.pi * r\n",
+        "fig, ax = plt.subplots(\n",
+        "  subplot_kw = {'projection': 'polar'} \n",
+        ")\n",
+        "ax.plot(theta, r)\n",
+        "ax.set_rticks([0.5, 1, 1.5, 2])\n",
+        "ax.grid(True)\n",
+        "plt.show()"
+      ],
+      "id": "fig-polar",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here's an example of citing a source [see @phil99, pp. 33-35]. Be sure the source information is entered in \"BibTeX\" form in the `references.bib` file.\n",
+        "\n",
+        "\n",
+        "The bibliography will automatically be generated, listing all sources in the `.bib` file."
+      ],
+      "id": "67f4472d"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/Users/bijayadhikari/Library/Python/3.11/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
