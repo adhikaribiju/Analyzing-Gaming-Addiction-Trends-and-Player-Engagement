@@ -1,5 +1,5 @@
 ---
-title: "Proposal: Analyzing DDoS Attack Patterns for Improved Detection"
+title: "Proposal: Analyzing Gaming Addiction Trends and Player Engagement"
 subtitle: "DATA 450 Capstone"
 author: "Bijay Adhikari"
 date: today
@@ -13,81 +13,81 @@ jupyter: python3
 
 # Introduction
 
-Distributed Denial of Service (DDoS) attacks are a significant threat to the modern internet. These attacks aim to disrupt the normal traffic of a server or network infrastructure by overwhelming it with a flood of network traffic coming from malicious or compromised systems. These attacks are very frequent and sophisticated at the same time. In 2023, there were more than 13 million DDoS attacks reported globally [@netscout2024]. These attacks can cause long service outages and lead to serious financial losses for businesses in all industries. This project analyzes a public DDoS dataset to identify prevalent attack vectors, differentiate malicious traffic characteristics, and explore attack patterns related to time and protocol. The ultimate goal is to improve our understanding of DDoS attack dynamics and contribute to the development of effective yet simpler cybersecurity strategies for such attacks.
+Video game addiction is a growing issue in the gaming industry impacting individuals by excessive playtime and compulsive engagement. Certain game mechanics, monetization strategies, and social features may contribute to prolonged gaming sessions which may lead to potential addiction concerns. Studies suggest that 3-4% of gamers worldwide experience symptoms of gaming disorder, with excessive gaming linked to negative impacts on mental health, productivity, and social well-being [@pontes2021]. As gaming continues to evolve with better immersive experiences, it is important for developers, researchers, and policymakers to understand the factors that contribute to prolonged playtime. This project aims to analyze player engagement trends and addiction risk factors using publicly available gaming data. The primary objectives are to examine how game design elements, monetization models, and game genres influence playtime and to develop a predictive model for addiction potential. The ultimate goal is to improve our understanding of what makes games engaging and potentially addictive, offering insights into responsible game design and its impact on player behavior.
+
 
 # Dataset
 
-The dataset I plan to use for this project is the "DDoS 2019" [@sharafaldin19] dataset provided by the Canadian Institute for Cybersecurity (CIC) at the University of New Brunswick.
+The dataset for this proect will be obtained primarily from Steam API[@valve] which provides publicly available gaming data. The Steam API allows data related to game metadata, player statistics, pricing information and publicly made user reviews. Most of the required data are easily accessible from their API. The following variables are intended to be used in the analysis:
 
-The dataset can be downloaded directly from the CIC website. As per the CIC, the dataset was created in a realistic network environment. The data was captured in CSV format and includes network traffic features extracted from packet captures using the CICFlowMeter tool [@sharafaldin19]. The dataset contains various types of DDoS attacks as well as benign traffic. The following variables are intended to be used in the analysis:
+* game_id – Unique identifier assigned to each game on Steam.
+* title – Name of the game as listed on Steam.
+* genre – Category of the game (e.g., FPS, Battle Royale, MMORPG).
+* multiplayer – Indicator for multiplayer or single-player.
+* avg_playtime – Mean number of hours played per user.
+* total_playtime – Cumulative hours played across all users.
+* player_count – Number of active players at a given time.
+* concurrent_players – Peak number of players online simultaneously.
+* monthly_active_users – Number of unique players engaging with the game within a month.
+* price – Cost of the game at purchase (in USD).
+* microtransactions – Indicator for in-game purchases or no purchases.
+* review_score – Percentage of positive reviews on Steam.
+* addiction_mentions – Number of reviews containing addiction-related keywords.
 
 
-* Flow Duration: Duration of the network flow (nanoseconds)
-* Total Fwd Packets: Total number of packets sent in the forward direction
-* Total Backward Packets: Total number of packets sent in the backward direction
-* Flow Bytes/s: Number of bytes per second within a flow
-* Flow Packets/s: Number of packets per second within a flow
-* Protocol: Protocol used (e.g., TCP, UDP, ICMP)
-* Packet Length Mean: Average length of packets in a flow
-* Label: Classification of the flow (Benign or DDoS type)
 
 
 # Data Acquisition and Processing
 
-The data can be obtained by downloading the dataset directly from the CIC's website. The first step in processing will involve exploring the dataset to understand its structure, data types, and to identify any missing values. For the data cleaning, missing values will be checked and handled appropriately. This may involve imputation, such as using the mean or median for numerical features or the mode for categorical features, or the removal of rows with excessive missing data. Once missing values are addressed, the next step will be to ensure that all columns have the correct data types, with numerical features properly formatted and categorical features correctly encoded. The dataset will also be examined for infinite or NaN values. If any additional categorical features beyond 'Protocol' and 'Label' are found relevant, they will be numerically encoded, using techniques like one-hot encoding if necessary.
-
+The data for this project will be retrieved using the Steam API. It provides structured JSON data on game metadata, player statistics, pricing, and user reviews. Access to the API requires an API key availble to developers or Steam gamers and it has already been obtained. The data extraction process will involve making API requests to collect information on game details, playtime metrics, monetization models, and user-generated reviews, which will be stored in multiple CSV files, each corresponding to different data categories such as game metadata, player engagement statistics, and other gaming data. However, in order to obtain player engagement data, a random sampling approach will be applied. Since Steam does not provide a direct way to retrieve public user IDs, user IDs will be randomly generated and checked against publicly accessible profiles to extract playtime statistics. The aim is to collect sufficiently large random sample of users so the dataset will allow generalizable insights into engagement trends. Once the data is collected, preprocessing steps will include converting JSON responses into structured tables, handling missing values, normalizing numerical variables, and recoding categorical data using one-hot encoding. 
 
 # Research Questions and Methodology
 
 
-1. Which DDoS vectors (UDP flood, HTTP flood, etc.) appear most frequently in the dataset? To answer this, I will filter the dataset for DDoS attacks, and count the occurrences of each DDoS attack vector from the 'Label' column. I will then normalize these counts to percentages and visualize the results using a bar chart, with each bar representing a DDoS vector and the height representing its frequency.
-
-Estimated Time: 2 hours
-
-
-2. How do packet size, flow duration, and protocol usage differ between DDoS and benign flows? To answer this, I will select features like 'Fwd Packet Length Mean', 'Flow Duration', and 'Protocol'. I will create subsets for benign and DDoS flows. For packet size and flow duration, I will calculate descriptive statistics, visualize distributions using box and violin plots, and perform statistical tests. For 'Protocol', I will calculate and visualize frequency distributions for both flow types using side-by-side bar charts.
-
-Estimated Time: 5 hours
-
-
-3. Are attacks more likely at certain times of day or under specific network conditions? To answer this, for the time of day, I will extract the 'hour of day', group data by hour and calculate the DDoS proportion per hour. I will visualize it with a line chart. For network conditions, if a proxy like 'Flow Bytes/s' is available, I will correlate the hourly network load with the hourly DDoS proportion.
-
-Estimated Time: 5 hours
-
-
-
-4. Which features (e.g., packet rates, flow bytes/s) might be the strongest indicators of an ongoing DDoS? To answer this, I will select relevant features and train a Random Forest or Logistic Regression classifier to predict DDoS attacks. I will then extract feature importance scores and also calculate the correlation of each feature with the 'is_DDoS' label. Lastly, I will rank features by both importance and correlation to identify the strongest indicators.
-
-Estimated Time: 5 hours
-
-5. Does TCP or UDP dominate in these attacks, and does one protocol create significantly different traffic signatures? To answer this, for protocol dominance, I will filter for TCP and UDP flows separately, calculate the DDoS proportion within each protocol group, and visualize it using a bar chart. For traffic signatures, I will compare the distributions of key features for TCP DDoS and UDP DDoS flows using box and violin plots.
+1. How much time are people spending on gaming per week, and what does it reveal about gaming addiction trends? To answer this, I will filter the dataset for player engagement data, specifically focusing on weekly playtime data and public user profiles. I will compute mean, median, and variance of weekly playtime, categorize users into engagement levels (e.g., low, moderate, and high playtime), and identify outliers that indicate excessive gaming. I will then normalize playtime data across different games to compare engagement levels. Finally, I will visualize the results on a histogram of weekly playtime distributions.
 
 Estimated Time: 3 hours
 
+2. Which game design elements—such as microtransactions, progression systems, and multiplayer vs. single-player structures—are most associated with prolonged playtime and potential addiction? To answer this, I will filter the dataset based on game metadata and monetization features. I will classify games according to presence of microtransactions, multiplayer functionality, and game progression mechanics. I will then compute average playtime for each category and compare playtime across monetization models and game mechanics. ANOVA and t-tests will be used to assess statistical differences in engagement between game categories. The results will be visualized using boxplots comparing playtime distributions for different monetization and design elements.
+
+Estimated Time: 6 Hours
+
+3. Are certain game genres (e.g., MMORPGs, Battle Royales) more prone to fostering addiction, and what common design elements contribute to high engagement? To answer this,  I will calculate average playtime per genre and normalize these values to compare engagement trends. Statistical tests (ANOVA, t-tests) will be applied to assess whether certain genres are associated with significantly higher playtime. Additionally, I will use clustering techniques (K-Means or Hierarchical Clustering) to group games based on engagement patterns and uncover common design elements among highly engaging genres. The results will be visualized using a heatmap comparing playtime across different genres and scatter plots displaying engagement clusters. 
+
+Estimated Time: 5 Hours
+
+4. Do highly addictive games tend to have higher or lower ratings, and what are the most common sentiments expressed in player reviews? To answer this, I will analyze the relationship between average playtime and review scores by creating a heatmap that plots playtime on one axis and review scores on the other. Next, I will analyze user review text using natural language processing to identify common sentiment patterns among highly engaging games. Then, I will use sentiment analysis to classify reviews as positive, neutral, or negative, and extract addiction-related keywords.
+
+Estimated Time: 5 Hours
+
+5. Are free-to-play games with monetization mechanics more addictive than paid games, and how does their playtime compare?
+To answer this, I will classify games into free-to-play and paid categories based on pricing data. I will then compare average playtime between these two groups using a violin plot, which will show the distribution of playtime for each pricing model. I will use clustering on playtime and retention data.  The clusters will be plotted in a scatter plot with distinct color groups, helping reveal whether free-to-play games tend to fall into high-playtime, high-retention clusters more frequently than paid games.
+
+Estimated Time: 5 Hours
 
 
 # Work plan
 
-**Week 4 (2/10 - 2/16):**
+**Week 4 (2/10 - 2/16):** 
 
-* Data cleaning and merging (4 hours)
-* Exploratory Data Analysis (EDA) (3 hours)
+* Data Collection (6 hours)
+* Data Tidying (2 hours)
 
 **Week 5 (2/17 - 2/23):**
 
-* Address missing values and normalize data (3 hours)
-* Answer Question 1(4 hours)
+* Complete Question 1: Compute playtime distributions and generate histogram (3 hours)
+* Complete Question 2: Classify games by monetization and mechanics (6 hours)
 
 **Week 6 (2/24 - 3/2):**
 
-* Answer Question 2 (5 hours)
-* Begin Question 3 (5 hours)
+* Complete Question 3: Genre and engagement analysis (5 hours)
+* Complete Question 4: Complete heatmaps and extract and preprocess review scores and text for NLP (4 hours)
+
 
 **Week 7 (3/3 - 3/9):**
 
-* Complete Question 3 (3 hours)
-* Start building the Random Forest model for Question 4 (4 hours)
 * Presentation prep and practice (4 hours)
+* Complete Question 5: heatmap and clustering
 
 **Week 8 (3/10 - 3/16):** *Presentations given on Wed-Thu 3/12-3/13.*
 
@@ -98,24 +98,30 @@ Estimated Time: 3 hours
 
 * Peer feedback (2 hours)
 * Poster revisions (1.5 hours)
+* Finalizing visualizations (2 hours)
+
 
 **Week 10 (3/31 - 4/6):** *Final Poster due Sunday 4/6.*
 
 * Peer feedback (1.5 hours)
 * Poster revisions (2 hours)
+* Refining and finalizing all plots and figures for clarity (3.5 hours)
 
 **Week 11 (4/7 - 4/13):**
 
-* Validate models with cross-validation (2 hours).
+* Begin drafting blog post introduction and methodology sections (3.5 hours)
+* Review and interpret key findings from research questions (3.5 hours)
 
 **Week 12 (4/14 - 4/20):**
 
-* Write blog post methods/results sections (4 hours).
+* Complete blog post results section and integrate visualizations (4 hours)
+* Refine written analysis (3 hours)
 
 
 **Week 13 (4/21 - 4/27):** *Blog post draft 1 due Sunday night 4/28.*
 
-* Finalize blog post (4 hours)
+* Finalize and proofread blog post draft (4 hours)
+* Cross-check blog post, poster, and research findings (3 hours)
 
 **Week 14 (4/28 - 5/4):**
 
@@ -129,4 +135,3 @@ Estimated Time: 3 hours
 
 
 # References
-
