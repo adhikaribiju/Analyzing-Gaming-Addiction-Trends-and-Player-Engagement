@@ -1,8 +1,8 @@
 ---
-title: "Week [X] Progress Report"
+title: "Week 6 Progress Report"
 subtitle: "DATA 450 Capstone"
-author: "[Your Name]"
-date: 2/13/23
+author: "Bijay Adhikari"
+date: 3/2/25
 date-format: "[Week ending: ] M/D/YY"
 number-sections: false
 format:
@@ -13,30 +13,28 @@ format:
 
 | Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
 |------|-------|----------|---------|--------|
-| Mon.  | [4-6pm; 8-9pm]   | [3] | [Recode variables; Work on Q2] | [Link 1](https://github.com/debbieyuster/capstone/commit/394c14b7aa1abba5ef3b00f023e321dea9649e92) |
+| Mon.  | 4-7pm   | 3 | Worked on Q2; Created initial box plots and heatmaps |[Link](https://github.com/adhikaribiju/capstone/commit/d29519d209f7e6f802fadde491c1873c49786c75) |
 | Tue.  |  |  |  |  |
 | Wed.  |  |  |  |  |
-| Thu.  |  |  |  |  |
+| Thu.  | 5-7pm | 2 | Refined visualizations; added violin plots | [Link](https://github.com/adhikaribiju/capstone/commit/d29519d209f7e6f802fadde491c1873c49786c75) |
 | Fri.  |  |  |  |  |
-| Sat.  |  |  |  |  |
+| Sat.  | 3-5pm | 2 | Completed Q2; started Q3 | [Link](https://github.com/adhikaribiju/capstone/commit/d29519d209f7e6f802fadde491c1873c49786c75) |
 | Sun.  |  |  |  |  |
 
 : {tbl-colwidths="[10, 15, 12, 50, 13]"}
 
-**Total \# of hours worked this week: [X]**
+**Total \# of hours worked this week: 7**
 
 ## What you accomplished (or attempted) this week:
+Worked on Q2; refined visualizations, improved data representation with violin plots, and analyzed multiplayer impact on playtime.
 
-[Text here]
 
 ## Any setbacks/roadblocks you experienced:
-
-[Text here]
+None.
 
 ## What you plan to work on next:
+Complete Q3 and Q4
 
-[Text here]
 
 ## Are you on track? If not, how will you get back on track?
-
-[Text here]
+Yes, focusing next on game genres/mechanics.
