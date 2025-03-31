@@ -1,0 +1,41 @@
+---
+title: "Week 7 Progress Report"
+subtitle: "DATA 450 Capstone"
+author: "Bijay Adhikari"
+date: 3/9/25
+date-format: "[Week ending: ] M/D/YY"
+number-sections: false
+format:
+  pdf: default
+---
+
+# Time Log
+
+| Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
+|------|-------|----------|---------|--------|
+| Mon.  |  |  |  |  |
+| Tue.  |  |  |  |  |
+| Wed.  |  |  |  |  |
+| Thu.  | 3-8pm | 5 | Q3; Researched ways to handle majority class sampling issue; worked with RandomUnderSampler from imblearn.under_sampling | [Link](https://github.com/adhikaribiju/capstone/commit/889f981fc971a8b57211bbfda25253b99b3e207c#diff-1f9421ca20fda3aa0baf9d1f47717f7412eda6fd0cc94ca45a34c9b69577c662) |
+| Fri.  | 1-4pm, 5-9pm | 7 | Built predictive models | [Link](https://github.com/adhikaribiju/capstone/commit/b327b8bac8333f4dfe4eccc2a0506583d64278ab) |
+| Sat.  | 10am-12pm, 3-6pm | 5 | Q4; Researched sentiment analysis; performed sentiment analysis on reviews; created word clouds for top 2 most popular games | [Link](https://github.com/adhikaribiju/capstone/commit/273ab8290c2bac5ffb3eb8e1e21014b7a81562eb) |
+| Sun.  |  |  |  |  |
+
+: {tbl-colwidths="[10, 15, 12, 50, 13]"}
+
+**Total \# of hours worked this week: 17**
+
+## What you accomplished (or attempted) this week:
+Worked on predictive models and tackled class imbalance issues using RandomUnderSampler. Researched sentiment analysis and applied it to game reviews. Created word clouds for the two most popular games.
+
+
+## Any setbacks/roadblocks you experienced:
+Class imbalance caused predictive models to favor True Positives. Considered SMOTE but used RandomUnderSampler due to categorical data. Adjusted models for better balance.
+
+
+## What you plan to work on next:
+Prepare for the presentation, refine analysis, expand sentiment analysis, and draft a blog post summarizing findings.
+
+
+## Are you on track? If not, how will you get back on track?
+Yes, on track.

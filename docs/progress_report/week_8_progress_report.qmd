@@ -1,0 +1,39 @@
+---
+title: "Week 8 Progress Report"
+subtitle: "DATA 450 Capstone"
+author: "Bijay Adhikari"
+date: 3/14/25
+date-format: "[Week ending: ] M/D/YY"
+number-sections: false
+format:
+  pdf: default
+---
+
+# Time Log
+
+| Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
+|------|-------|----------|---------|--------|
+| Mon.  | 4-7pm   | 3 | worked on making presentation slides |
+| Tue.  | 6-9pm | 3 | prepared for the presentation |  |
+| Wed.  |  |  |  |  |
+| Thu.  |  |  |  |
+| Fri.  | 2-4pm | 2 | Worked on the peer review assignment  |  |
+| Sat.  |  |  |  | |
+| Sun.  |  |  |  |  |
+
+: {tbl-colwidths="[10, 15, 12, 50, 13]"}
+
+**Total \# of hours worked this week: 9**
+
+## What you accomplished (or attempted) this week:
+Worked on making presentation slides; peer review
+
+## Any setbacks/roadblocks you experienced:
+None.
+
+## What you plan to work on next:
+Sentiment Analysis
+
+
+## Are you on track? If not, how will you get back on track?
+Yes.
