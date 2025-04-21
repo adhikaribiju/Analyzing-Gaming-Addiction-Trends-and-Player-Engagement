@@ -1,0 +1,40 @@
+---
+title: "Week 9 Progress Report"
+subtitle: "DATA 450 Capstone"
+author: "Bijay Adhikari"
+date: 3/30/25
+date-format: "[Week ending: ] M/D/YY"
+number-sections: false
+format:
+  pdf: default
+---
+
+# Time Log
+
+| Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
+|------|-------|----------|---------|--------|
+| Mon.  |  |  |  | |
+| Tue.  |  |  |  |  |
+| Wed.  |  |  |  |  |
+| Thu.  |  |  |  |  |
+| Fri.  |  |  |  |  |
+| Sat.  | 3-7pm | 4 | Worked on Poster Draft | |
+| Sun.  | 7-10pm | 5 | Sentiment Analysis and refined few codes | [Link](https://github.com/adhikaribiju/capstone/commit/7bdca5dc0319ccec5eab3da8b9e79b89825620fc) |
+
+: {tbl-colwidths="[10, 15, 12, 50, 13]"}
+
+**Total \# of hours worked this week: 7**
+
+## What you accomplished (or attempted) this week:
+Worked on sentiment analysis and finished 1st draft of the poster.
+
+
+## Any setbacks/roadblocks you experienced:
+Choosing the appropriate graph to include in the poster was difficult.
+
+## What you plan to work on next:
+Blog post
+
+
+## Are you on track? If not, how will you get back on track?
+Yes.

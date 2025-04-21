@@ -1,0 +1,39 @@
+---
+title: "Week 11 Progress Report"
+subtitle: "DATA 450 Capstone"
+author: "Bijay Adhikari"
+date: 4/13/25
+date-format: "[Week ending: ] M/D/YY"
+number-sections: false
+format:
+  pdf: default
+---
+
+# Time Log
+
+| Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
+|------|-------|----------|---------|--------|
+| Mon.  | 7am-8am | 1 | Worked on Poster Draft 3 |  |
+| Tue.  |  |  |  |  |
+| Wed.  | 3pm-5pm | 2 | Worked on Poster Draft 4 |  |
+| Thu.  |  |  |  |  |
+| Fri.  |  |  |  |  |
+| Sat.  | 7pm-9pm | 2 | Researched on interactive plots |  |
+| Sun.  |  |  |  |  |
+
+: {tbl-colwidths="[10, 15, 12, 50, 13]"}
+
+**Total \# of hours worked this week: 5**
+
+## What you accomplished (or attempted) this week:
+Worked on poster drafts and researched on interactive plots to use on blog posts.
+
+## Any setbacks/roadblocks you experienced:
+None.
+
+## What you plan to work on next:
+Blog posts.
+
+
+## Are you on track? If not, how will you get back on track?
+Yes.

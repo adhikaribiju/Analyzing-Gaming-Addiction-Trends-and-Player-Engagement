@@ -1,84 +1,9 @@
----
-title: "Analyzing Gaming Addiction Trends and Player Engagement"
-#subtitle: "Spring 2025"
-author: "Bijay Adhikari"
-bibliography: references.bib
-nocite: |
-  @*
-number-sections: false
-format:
-  html:
-    theme: default
-    rendering: embed-resources
-    code-fold: true
-    code-tools: true
-    toc: true
-jupyter: python3
----
 
 
-![Source: iStockPhoto](https://media.istockphoto.com/id/1132282499/photo/woman-playing-video-games.jpg?s=612x612&w=0&k=20&c=ljeQB2UiYW6fYNjAZONaCcdH1r7GPPE7SvXzQ5YJPMk=){fig-alt="A picture of a person indulged in video game."}
-
-
-Video games are a growing form of entertainment, social interaction, and even professional competition. But how much is too much? As gaming becomes increasingly accessible, concerns about addiction and player engagement continue to surface. In this analysis, we dive into gaming trends based on user activity data from Steam, the world’s largest online gaming platform.
-
-This blog explores the proportion of users who exhibit addictive behavior and examines how game design elements—such as multiplayer features or microtransactions—affect playtime.
-
-Let’s dive in.
-
-
-
-## Data Sources
-
-For this project, Steam was selected as the primary source of gaming data due to its large user base, extensive game catalog, and publicly accessible API. Two main datasets were extracted using the Steam Web API specifically using the **ISteamApps/GetAppList** and **IPlayerService/GetOwnedGames** endpoints:  
-
-- **`steam_game_data.csv`** : This dataset contains detailed information about 91,690 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
-
-- **`user_playtime_data.csv`** : This dataset consists of 66,187 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information. Each user (`user_id`) can have multiple games (`game_id`) associated with their account.  
-
-```{python}
-# importing libraries
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
-
-import scipy.stats as stats
-import time
-import itertools
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.metrics import classification_report
-
-import warnings
-warnings.filterwarnings('ignore')
-
-
-games_data = pd.read_csv("../data/steam_game_data.csv")
-users_data = pd.read_csv("../data/user_playtime_data.csv")
-reviews_data = pd.read_csv("../data/reviews.csv")
-
-```
-
-## Data Preparation
-
-
-The Steam library includes not only actively released games but also test builds, delisted content, and placeholders. A significant portion of the entries featured non-standard release indicators such as “Q2 2025” or “Coming soon,”.
-
-Entries with incomplete or ambiguous metadata were removed. Standardized formatting was applied to key fields, including release dates and platform tags, to produce a clean dataset suitable for reliable trend analysis.
-```{python}
 
 # Removing rows with any missing values
 games_data.dropna(inplace=True)
+
 
 # Attemptting to parse the dates with possible date formats : 
 # Possible formats known from: https://steamcommunity.com/sharedfiles/filedetails/?id=2554483179#:~:text=Date%20part%20order%20can%20be,format%20will%20be%20applied%20immediately.
@@ -112,11 +37,10 @@ users_data['avg_playtime'] = users_data['playtime_2weeks'] / 14
 users_data['playtime_2weeks'] = users_data['playtime_2weeks'] / 60
 users_data['playtime_forever'] = users_data['playtime_forever'] / 60
 
-```
 
 
-##  Engagement Levels
-```{python}
+# Q1
+# let's first filter only active users
 active_users = users_data[users_data['playtime_2weeks'] > 0]
 
 # calculate weekly playtime (in hours) for those active uses
@@ -134,9 +58,6 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-```
-
-```{python}
 
 
 # Lets also cateogrize active users based on weekly playtime
@@ -152,35 +73,30 @@ active_users['playtime_category'] = active_users['weekly_playtime_hours'].apply(
 
 # total active users in each category
 active_category_counts = active_users['playtime_category'].value_counts()
-
+print("\nActive User Distribution by Playtime Category:")
+print(active_category_counts)
 
 plt.figure(figsize=(6, 6))
 plt.pie(active_category_counts, labels=active_category_counts.index, autopct='%1.1f%%', startangle=140, colors=['#66c2a5', '#fc8d62', '#8da0cb'])
 plt.title('Active User Distribution by Playtime Category')
 plt.show()
 
+plt.figure(figsize=(8, 5))
+active_category_counts.plot(kind='bar', color=['#66c2a5', '#fc8d62', '#8da0cb'], edgecolor='black')
 
-```
+# Labels and title
+plt.xlabel('Playtime Category')
+plt.ylabel('Number of Users')
+plt.title('Active User Distribution by Playtime Category')
+plt.xticks(rotation=0)  # Keep category labels horizontal
+plt.grid(axis='y', linestyle='--', alpha=0.7)
 
-
-When analyzing active user behavior, it turns out most people aren't glued to their screens for hours on end.
-
-In fact, 75.4% of users are casual gamers, playing for less than 7 hours a week. This group makes up the overwhelming majority, indicating that for most users, gaming is a light and occasional pastime.
-
-Another 17.9% fall into the moderate gamer category, playing between 7 to 20 hours per week. This suggests a healthy level of interest, frequent enough to show engagement, but not so much that it takes over their weekly schedule.
-
-Only 6.6% of users exceed 20 hours of playtime per week, which may point to a possible risk of gaming addiction. However, this small percentage suggests that excessive gaming behavior isn’t widespread in this dataset.
-
-A closer look at the playtime distribution reveals a long tail, a small number of users play for 40+ hours per week. These outliers might be worth exploring further, but overall, they don’t represent the norm.
-
-So what does all of this tell us? Most people play games casually. A smaller group plays regularly, but still within a reasonable range. Very few exhibit playtime that raises concerns about overuse.
-
-This paints a picture of gaming as something people enjoy in moderation, not as a widespread addictive behavior.
+plt.show()
 
 
 
-## What drives players to keep playing?
-```{python}
+#Q2.
+
 # Merging user_data with games_data on game_id
 merged_data = users_data.merge(games_data, on='game_id', how='left')
 merged_data.dropna(inplace=True)
@@ -211,10 +127,7 @@ sns.heatmap(correlation_results, annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Correlation Between Game Design Elements and Playtime")
 plt.show()
 
-```
 
-hypothesis test
-```{python}
 
 #hyopthesis testing
 import pandas as pd
@@ -255,10 +168,6 @@ plt.title("Proportion of Addicted Players by Game Type")
 
 plt.ylim(0, 0.3) 
 plt.show()
-```
-
-other tests
-```{python}
 
 import pandas as pd
 import numpy as np
@@ -294,10 +203,13 @@ run_ttest('DLC_count')
 run_ttest('max_concurrent_players')
 run_ttest('average_review_score')
 
-```
 
-## Q3
-```{python}
+
+
+
+
+
+# Q3
 
 
 import pandas as pd
@@ -325,10 +237,8 @@ plt.show()
 
 addiction_correlation, _ = pearsonr(merged_data["playtime_forever"], merged_data["average_review_score"])
 
-```
 
-```{python}
-
+# -----------
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -358,32 +268,76 @@ plt.show()
 addiction_correlation, _ = pearsonr(merged_data["playtime_forever"], merged_data["average_review_score"])
 
 
-```
+
+
+#Q4
+
+merged_data = users_data.merge(games_data, on='game_id', how='left')
+merged_data.dropna(inplace=True)
+
+# get the title from the games_data
+df_reviews = merged_data.merge(reviews_data, on='game_id', how='inner')
+
+import re
+import matplotlib.pyplot as plt
+from textblob import TextBlob
+
+
+df_reviews = df_reviews[df_reviews['playtime_2weeks'] > 0]
+
+df_reviews = df_reviews[df_reviews['playtime_2weeks'] < 40]
+
+
+#df_reviews= reviews_data
+
+# Function to clean review text
+def clean_text(text):
+    if pd.isna(text):
+        return ""
+    text = re.sub(r"\[.*?\]", "", text)  # Removing tags like [h1], [b], etc.
+    text = re.sub(r"http\S+|www\S+", "", text)  # Removng URLs
+    text = re.sub(r"[^a-zA-Z0-9.,!?'\s]", "", text)  # Remove special characters
+    text = text.lower().strip()  # Convert to lowercase and strip spaces
+    return text
+
+# Apply text cleaning
+df_reviews["cleaned_review"] = df_reviews["review"].apply(clean_text)
+
+# Function to get sentiment polarity
+def get_sentiment(text):
+    if not text:  # If empty text, return neutral
+        return 0  
+    return TextBlob(text).sentiment.polarity
+
+# Apply sentiment analysis to the cleaned reviews
+df_reviews["sentiment_score"] = df_reviews["cleaned_review"].apply(get_sentiment)
+
+# Classify reviews based on sentiment score
+df_reviews["sentiment"] = df_reviews["sentiment_score"].apply(
+    lambda x: "Positive" if x > 0.05 else ("Negative" if x < -0.05 else "Neutral")
+)
+
+# Count of each sentiment category
+sentiment_counts = df_reviews["sentiment"].value_counts()
+
+# Visualization: Sentiment Distribution
+plt.figure(figsize=(8, 5))
+plt.bar(sentiment_counts.index, sentiment_counts.values)
+plt.xlabel("Sentiment Category")
+plt.ylabel("Number of Reviews")
+plt.title("Distribution of Sentiments in Reviews(non-addicted)")
+plt.show()
+
+# sentiment by game
+game_sentiment = df_reviews.groupby("title")["sentiment_score"].mean().reset_index()
+
+# Top 10 most positively reviewed games
+top_positive_games = game_sentiment.sort_values(by="sentiment_score", ascending=False).head(10)
+
+# Top 10 most negatively reviewed games
+top_negative_games = game_sentiment.sort_values(by="sentiment_score", ascending=True).head(10)
 
 
 
-## Heading
-```{python}
-
-```
 
 
-## Heading
-```{python}
-
-```
-
-
-## Heading
-```{python}
-
-```
-
-
-
-
-
-Here's an example of citing a source [see @phil99, pp. 33-35]. Be sure the source information is entered in "BibTeX" form in the `references.bib` file.
-
-
-The bibliography will automatically be generated, listing all sources in the `.bib` file.
