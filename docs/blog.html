@@ -103,7 +103,7 @@ div.csl-indent {
   <li><a href="#data-sources" id="toc-data-sources" class="nav-link active" data-scroll-target="#data-sources">Data Sources</a></li>
   <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">Data Preparation</a></li>
   <li><a href="#engagement-levels" id="toc-engagement-levels" class="nav-link" data-scroll-target="#engagement-levels">Engagement Levels</a></li>
-  <li><a href="#q2" id="toc-q2" class="nav-link" data-scroll-target="#q2">Q2</a></li>
+  <li><a href="#what-drives-players-to-keep-playing" id="toc-what-drives-players-to-keep-playing" class="nav-link" data-scroll-target="#what-drives-players-to-keep-playing">What drives players to keep playing?</a></li>
   <li><a href="#q3" id="toc-q3" class="nav-link" data-scroll-target="#q3">Q3</a></li>
   <li><a href="#heading" id="toc-heading" class="nav-link" data-scroll-target="#heading">Heading</a></li>
   <li><a href="#heading-1" id="toc-heading-1" class="nav-link" data-scroll-target="#heading-1">Heading</a></li>
@@ -144,9 +144,9 @@ div.csl-indent {
 <figcaption>Source: iStockPhoto</figcaption>
 </figure>
 </div>
-<p>Video games are a growing form of entertainment, social interaction, and even professional competition. But how much is too much? As gaming becomes increasingly accessible, concerns about addiction and player engagement continue to surface. In this analysis, we dive into gaming trends based on user activity data from Steam, the world’s largest online gaming platform.</p>
-<p>This blog explores the proportion of users who exhibit addictive behavior and examines how game design elements—such as multiplayer features or microtransactions—affect playtime.</p>
-<p>Let’s dive in.</p>
+<p>Have you ever found yourself so immersed in a video game that hours passed without you even noticing? For me, it was the Grand Theft Auto series. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games were fun, simple, and a great way to relax.</p>
+<p>Today, the gaming industry has transformed massively. Video games are more immersive, cinematic, and competitive than ever. Streamers and esports players are treated like celebrities, with huge fan bases following everything they do. Video games are no longer just a form of entertainment. They have become a way to express yourself, get inspired, and even explore future career options. With that rise comes a darker flip side, which is gaming addiction. As fun and exciting as games can be, excessive play can negatively impact mental health, productivity, and real-world relationships. Studies show that around 3-4% of gamers exhibit symptoms of gaming disorder, leading to anxiety, social withdrawal, and even depression in some cases.</p>
+<p>This blog takes a closer look at where we stand today when it comes to gaming addiction. By using real-time data from the Steam library, one of the world’s largest gaming platforms, this project explores how often people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.</p>
 <section id="data-sources" class="level2">
 <h2 class="anchored" data-anchor-id="data-sources">Data Sources</h2>
 <p>For this project, Steam was selected as the primary source of gaming data due to its large user base, extensive game catalog, and publicly accessible API. Two main datasets were extracted using the Steam Web API specifically using the <strong>ISteamApps/GetAppList</strong> and <strong>IPlayerService/GetOwnedGames</strong> endpoints:</p>
@@ -154,7 +154,7 @@ div.csl-indent {
 <li><p><strong><code>steam_game_data.csv</code></strong> : This dataset contains detailed information about 91,690 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.</p></li>
 <li><p><strong><code>user_playtime_data.csv</code></strong> : This dataset consists of 66,187 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information. Each user (<code>user_id</code>) can have multiple games (<code>game_id</code>) associated with their account.</p></li>
 </ul>
-<div id="81215a1f" class="cell" data-execution_count="1">
+<div id="03f65ac5" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># importing libraries</span></span>
@@ -193,7 +193,7 @@ div.csl-indent {
 <h2 class="anchored" data-anchor-id="data-preparation">Data Preparation</h2>
 <p>The Steam library includes not only actively released games but also test builds, delisted content, and placeholders. A significant portion of the entries featured non-standard release indicators such as “Q2 2025” or “Coming soon,”.</p>
 <p>Entries with incomplete or ambiguous metadata were removed. Standardized formatting was applied to key fields, including release dates and platform tags, to produce a clean dataset suitable for reliable trend analysis.</p>
-<div id="5e834e18" class="cell" data-execution_count="2">
+<div id="799df01c" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removing rows with any missing values</span></span>
@@ -235,7 +235,7 @@ div.csl-indent {
 </section>
 <section id="engagement-levels" class="level2">
 <h2 class="anchored" data-anchor-id="engagement-levels">Engagement Levels</h2>
-<div id="c21bc664" class="cell" data-execution_count="3">
+<div id="d98eb47e" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>active_users <span class="op">=</span> users_data[users_data[<span class="st">'playtime_2weeks'</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
@@ -263,7 +263,7 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<div id="96f48a09" class="cell" data-execution_count="4">
+<div id="145d160d" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets also cateogrize active users based on weekly playtime</span></span>
@@ -302,9 +302,9 @@ div.csl-indent {
 <p>So what does all of this tell us? Most people play games casually. A smaller group plays regularly, but still within a reasonable range. Very few exhibit playtime that raises concerns about overuse.</p>
 <p>This paints a picture of gaming as something people enjoy in moderation, not as a widespread addictive behavior.</p>
 </section>
-<section id="q2" class="level2">
-<h2 class="anchored" data-anchor-id="q2">Q2</h2>
-<div id="b710d26c" class="cell" data-execution_count="5">
+<section id="what-drives-players-to-keep-playing" class="level2">
+<h2 class="anchored" data-anchor-id="what-drives-players-to-keep-playing">What drives players to keep playing?</h2>
+<div id="70a2e437" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merging user_data with games_data on game_id</span></span>
@@ -346,7 +346,7 @@ div.csl-indent {
 </div>
 </div>
 <p>hypothesis test</p>
-<div id="c2b6c55c" class="cell" data-execution_count="6">
+<div id="0b62ad89" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#hyopthesis testing</span></span>
@@ -409,7 +409,7 @@ P-value: 2.0539951084235817e-21</code></pre>
 </div>
 </div>
 <p>other tests</p>
-<div id="3fe0c1ff" class="cell" data-execution_count="7">
+<div id="4dc0abc2" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -464,7 +464,7 @@ T-test for average_review_score:
 </section>
 <section id="q3" class="level2">
 <h2 class="anchored" data-anchor-id="q3">Q3</h2>
-<div id="8f69b63d" class="cell" data-execution_count="8">
+<div id="52f14685" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -500,7 +500,7 @@ T-test for average_review_score:
 </div>
 </div>
 </div>
-<div id="ab8dad0c" class="cell" data-execution_count="9">
+<div id="dab2f930" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -1053,12 +1053,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="al">![Source: iStockPhoto](https://media.istockphoto.com/id/1132282499/photo/woman-playing-video-games.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=ljeQB2UiYW6fYNjAZONaCcdH1r7GPPE7SvXzQ5YJPMk=)</span>{fig-alt="A picture of a person indulged in video game."}</span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>Video games are a growing form of entertainment, social interaction, and even professional competition. But how much is too much? As gaming becomes increasingly accessible, concerns about addiction and player engagement continue to surface. In this analysis, we dive into gaming trends based on user activity data from Steam, the world’s largest online gaming platform.</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>Have you ever found yourself so immersed in a video game that hours passed without you even noticing? For me, it was the Grand Theft Auto series. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games were fun, simple, and a great way to relax.</span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>This blog explores the proportion of users who exhibit addictive behavior and examines how game design elements—such as multiplayer features or microtransactions—affect playtime.</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>Let’s dive in.</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>Today, the gaming industry has transformed massively. Video games are more immersive, cinematic, and competitive than ever. Streamers and esports players are treated like celebrities, with huge fan bases following everything they do. Video games are no longer just a form of entertainment. They have become a way to express yourself, get inspired, and even explore future career options.</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>With that rise comes a darker flip side, which is gaming addiction. As fun and exciting as games can be, excessive play can negatively impact mental health, productivity, and real-world relationships. Studies show that around 3-4% of gamers exhibit symptoms of gaming disorder, leading to anxiety, social withdrawal, and even depression in some cases. </span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>This blog takes a closer look at where we stand today when it comes to gaming addiction. By using real-time data from the Steam library, one of the world’s largest gaming platforms, this project explores how often people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.</span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data Sources</span></span>
@@ -1209,7 +1209,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## Q2</span></span>
+<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## What drives players to keep playing?</span></span>
 <span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb12-191"><a href="#cb12-191" aria-hidden="true" tabindex="-1"></a><span class="co"># Merging user_data with games_data on game_id</span></span>
 <span id="cb12-192"><a href="#cb12-192" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> users_data.merge(games_data, on<span class="op">=</span><span class="st">'game_id'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>

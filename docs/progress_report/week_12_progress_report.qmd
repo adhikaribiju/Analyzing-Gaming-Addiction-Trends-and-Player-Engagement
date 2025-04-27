@@ -1,0 +1,40 @@
+---
+title: "Week 6 Progress Report"
+subtitle: "DATA 450 Capstone"
+author: "Bijay Adhikari"
+date: 4/20/25
+date-format: "[Week ending: ] M/D/YY"
+number-sections: false
+format:
+  pdf: default
+---
+
+# Time Log
+
+| Day  | Time  | \# Hours | Task(s) | GH Commit(s) |
+|------|-------|----------|---------|--------|
+| Mon.  |  |  |  |  |
+| Tue.  |  |  |  |  |
+| Wed.  |  |  |  |  |
+| Thu.  |  |  |  |  |
+| Fri.  |  |  |  |  |
+| Sat.  | 2-4pm | 2 | Wrote draft for blog post |
+| Sun.  | 4-9pm | 5 | Worked on blog post | [Link](https://github.com/adhikaribiju/capstone/commit/51b3b9471388dca797de14978cf8f56f6221e29c) |
+
+: {tbl-colwidths="[10, 15, 12, 50, 13]"}
+
+**Total \# of hours worked this week: 7**
+
+## What you accomplished (or attempted) this week:
+Worked on blog posts; introduction and first question
+
+
+## Any setbacks/roadblocks you experienced:
+None.
+
+## What you plan to work on next:
+Complete blog post
+
+
+## Are you on track? If not, how will you get back on track?
+Yes
