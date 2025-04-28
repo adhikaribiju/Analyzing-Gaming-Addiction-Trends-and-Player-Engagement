@@ -36,7 +36,7 @@ For this project, Steam was selected as the primary source of gaming data due to
 
 - **`user_playtime_data.csv`** : This dataset consists of 66,187 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information. Each user (`user_id`) can have multiple games (`game_id`) associated with their account.  
 
-
+```markdown
 ::: {.cell .code-fold="true" .code-summary="View user data collection script"}
 ```{python eval=false}
 import requests

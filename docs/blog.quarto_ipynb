@@ -46,7 +46,7 @@
         "\n",
         "::: {.cell .code-fold=\"true\" .code-summary=\"View user data collection script\"}"
       ],
-      "id": "d67a065d"
+      "id": "1fd780af"
     },
     {
       "cell_type": "code",
@@ -120,7 +120,7 @@
         "\n",
         "print('Data collection complete. Saved to \"user_playtime_data.csv\"')\n"
       ],
-      "id": "aeb69b77",
+      "id": "d03433cb",
       "execution_count": null,
       "outputs": []
     },
@@ -158,7 +158,7 @@
         "users_data = pd.read_csv(\"../data/user_playtime_data.csv\")\n",
         "reviews_data = pd.read_csv(\"../data/reviews.csv\")"
       ],
-      "id": "8b2a8ac8",
+      "id": "17f2d621",
       "execution_count": null,
       "outputs": []
     },
@@ -173,7 +173,7 @@
         "\n",
         "Entries with incomplete or ambiguous metadata were removed. Standardized formatting was applied to key fields, including release dates and platform tags, to produce a clean dataset suitable for reliable trend analysis.\n"
       ],
-      "id": "e9c73e67"
+      "id": "613ebef6"
     },
     {
       "cell_type": "code",
@@ -214,7 +214,7 @@
         "users_data['playtime_2weeks'] = users_data['playtime_2weeks'] / 60\n",
         "users_data['playtime_forever'] = users_data['playtime_forever'] / 60"
       ],
-      "id": "2103a1c1",
+      "id": "471660d5",
       "execution_count": null,
       "outputs": []
     },
@@ -224,7 +224,7 @@
       "source": [
         "##  Engagement Levels"
       ],
-      "id": "4e1ec6b0"
+      "id": "dbe4dcf3"
     },
     {
       "cell_type": "code",
@@ -247,7 +247,7 @@
         "plt.grid(True)\n",
         "plt.show()"
       ],
-      "id": "8c69dda4",
+      "id": "3d18c298",
       "execution_count": null,
       "outputs": []
     },
@@ -275,7 +275,7 @@
         "plt.title('Active User Distribution by Playtime Category')\n",
         "plt.show()\n"
       ],
-      "id": "77393200",
+      "id": "c6bbe9ed",
       "execution_count": null,
       "outputs": []
     },
@@ -301,7 +301,7 @@
         "\n",
         "## What drives players to keep playing?"
       ],
-      "id": "2a835108"
+      "id": "11ab6055"
     },
     {
       "cell_type": "code",
@@ -337,7 +337,7 @@
         "plt.title(\"Correlation Between Game Design Elements and Playtime\")\n",
         "plt.show()"
       ],
-      "id": "fc027474",
+      "id": "68e38112",
       "execution_count": null,
       "outputs": []
     },
@@ -347,7 +347,7 @@
       "source": [
         "hypothesis test"
       ],
-      "id": "59e5c27d"
+      "id": "ba8b8896"
     },
     {
       "cell_type": "code",
@@ -393,7 +393,7 @@
         "plt.ylim(0, 0.3) \n",
         "plt.show()"
       ],
-      "id": "0985ad56",
+      "id": "75eb9590",
       "execution_count": null,
       "outputs": []
     },
@@ -403,7 +403,7 @@
       "source": [
         "other tests"
       ],
-      "id": "57b9383b"
+      "id": "9e399aee"
     },
     {
       "cell_type": "code",
@@ -443,7 +443,7 @@
         "run_ttest('max_concurrent_players')\n",
         "run_ttest('average_review_score')"
       ],
-      "id": "6349e272",
+      "id": "3686974e",
       "execution_count": null,
       "outputs": []
     },
@@ -453,7 +453,7 @@
       "source": [
         "## Q3"
       ],
-      "id": "ab8bf0b9"
+      "id": "d4dc5a8c"
     },
     {
       "cell_type": "code",
@@ -484,7 +484,7 @@
         "\n",
         "addiction_correlation, _ = pearsonr(merged_data[\"playtime_forever\"], merged_data[\"average_review_score\"])"
       ],
-      "id": "d2532306",
+      "id": "d952ae0c",
       "execution_count": null,
       "outputs": []
     },
@@ -519,7 +519,7 @@
         "\n",
         "addiction_correlation, _ = pearsonr(merged_data[\"playtime_forever\"], merged_data[\"average_review_score\"])\n"
       ],
-      "id": "bc6ee982",
+      "id": "3d42c840",
       "execution_count": null,
       "outputs": []
     },
@@ -529,7 +529,7 @@
       "source": [
         "## Heading"
       ],
-      "id": "585bba05"
+      "id": "b27ec906"
     },
     {
       "cell_type": "markdown",
@@ -537,7 +537,7 @@
       "source": [
         "## Heading"
       ],
-      "id": "279c260b"
+      "id": "e73f8b0a"
     },
     {
       "cell_type": "markdown",
@@ -545,7 +545,7 @@
       "source": [
         "## Heading"
       ],
-      "id": "13d16ba6"
+      "id": "b9de0cb9"
     },
     {
       "cell_type": "markdown",
@@ -556,7 +556,7 @@
         "\n",
         "The bibliography will automatically be generated, listing all sources in the `.bib` file."
       ],
-      "id": "ff92574a"
+      "id": "705a0113"
     }
   ],
   "metadata": {
