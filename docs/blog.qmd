@@ -20,25 +20,63 @@ jupyter: python3
 ![Source: iStockPhoto](https://media.istockphoto.com/id/1132282499/photo/woman-playing-video-games.jpg?s=612x612&w=0&k=20&c=ljeQB2UiYW6fYNjAZONaCcdH1r7GPPE7SvXzQ5YJPMk=){fig-alt="A picture of a person indulged in video game."}
 
 
-Have you ever found yourself so immersed in a video game that hours passed without you even noticing? For me, it was the Grand Theft Auto series. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games were fun, simple, and a great way to relax.
+Have you ever found yourself so immersed in a video game that hours passed without you even noticing? I’m sure many of us have. For me, it started with the game, Grand Theft Auto: Vice City. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games provided a fun, simple, and great way to relax. 
 
-Today, the gaming industry has transformed massively. Video games are more immersive, cinematic, and competitive than ever. Streamers and esports players are treated like celebrities, with huge fan bases following everything they do. Video games are no longer just a form of entertainment. They have become a way to express yourself, get inspired, and even explore future career options.
-With that rise comes a darker flip side, which is gaming addiction. As fun and exciting as games can be, excessive play can negatively impact mental health, productivity, and real-world relationships. Studies show that around 3-4% of gamers exhibit symptoms of gaming disorder, leading to anxiety, social withdrawal, and even depression in some cases. 
+Today, the gaming industry has transformed tremendously. Video games are more immersive, cinematic, and competitive than ever. Streamers and esports players are treated like celebrities, with huge fan bases following their every move. Video games have evolved as more than just a form of entertainment. They have become a way to express yourself, get inspired, and even explore future career options. However, with this rise comes a darker flip side, which is gaming addiction. As fun and exciting as games can be, excessive play can negatively impact mental health, productivity, and real-world relationships. Studies show that around 3-4% of gamers exhibit symptoms of gaming disorder, leading to anxiety, social withdrawal, and even depression in some cases [@pontes2021]. 
 
-This blog takes a closer look at where we stand today when it comes to gaming addiction. By using real-time data from the Steam library, one of the world’s largest gaming platforms, this project explores how often people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.
+This blog aims to take a closer look at where we stand today when it comes to gaming addiction. By using real-time data from the Steam library, one of the world’s largest gaming platforms, this project explores how frequently people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.
 
+
+
+```{python}
+## importing libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+
+import scipy.stats as stats
+import time
+import itertools
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.metrics import classification_report
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+games_data = pd.read_csv("../data/steam_game_data.csv")
+users_data = pd.read_csv("../data/user_playtime_data.csv")
+reviews_data = pd.read_csv("../data/reviews.csv")
+
+```
 
 ## Data Sources
 
-For this project, Steam was selected as the primary source of gaming data due to its large user base, extensive game catalog, and publicly accessible API. Two main datasets were extracted using the Steam Web API specifically using the **ISteamApps/GetAppList** and **IPlayerService/GetOwnedGames** endpoints:  
+For this project, I chose Steam as the source of data due to its large user base, extensive game catalog, and publicly accessible API. Two main datasets were extracted using the Steam Web API specifically using the **ISteamApps/GetAppList** and **IPlayerService/GetOwnedGames** endpoints:  
 
 - **`steam_game_data.csv`** : This dataset contains detailed information about 91,690 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
 
 - **`user_playtime_data.csv`** : This dataset consists of 66,187 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information. Each user (`user_id`) can have multiple games (`game_id`) associated with their account.  
 
-```markdown
-::: {.cell .code-fold="true" .code-summary="View user data collection script"}
-```{python eval=false}
+Below you can find the Python script written to download the data. For the player data, the script generates a number of random Steam user IDs. For each valid public profile matching the user ID, the script retrieves information such as the number of games owned and the total and recent playtime.
+
+
+```{python}
+#| eval: false
+
+# usercollections.py
+
 import requests
 import pandas as pd
 import time
@@ -107,59 +145,113 @@ df.to_csv('user_playtime_data.csv', index=False)
 
 print('Data collection complete. Saved to "user_playtime_data.csv"')
 
+# --------------------------------------------------------------
 
-```
+# gamedatacollection.py
 
 
-
-
-```{python}
-# importing libraries
-import numpy as np
+import requests
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
-
-import scipy.stats as stats
 import time
-import itertools
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.metrics import classification_report
+columns = [
+    'game_id', 'title', 'developer', 'publisher', 'genre', 'release_date',
+    'platforms', 'multiplayer_support', 'graphics_quality', 'story_depth',
+    'DLC_count', 'max_concurrent_players', 'positive_review_pct',
+    'average_review_score', 'review_sentiment_score', 'number_of_reviews'
+]
 
-import warnings
-warnings.filterwarnings('ignore')
+app_list_url = 'http://api.steampowered.com/ISteamApps/GetAppList/v2/'
+app_list_response = requests.get(app_list_url)
+app_list_data = app_list_response.json()
 
 
-games_data = pd.read_csv("../data/steam_game_data.csv")
-users_data = pd.read_csv("../data/user_playtime_data.csv")
-reviews_data = pd.read_csv("../data/reviews.csv")
+apps = app_list_data['applist']['apps']
+app_ids = [str(app['appid']) for app in apps][:100000]
+
+
+# set up session
+session = requests.Session()
+retry = Retry(connect=5, backoff_factor=1, status_forcelist=[502, 503, 504])
+adapter = HTTPAdapter(max_retries=retry)
+session.mount('http://', adapter)
+
+# store game data
+all_games_data = []
+
+for idx, app_id in enumerate(app_ids):
+    try:
+        url = f'http://store.steampowered.com/api/appdetails?appids={app_id}'
+        response = session.get(url, timeout=10)
+        response.raise_for_status()
+        game_data = response.json()
+        
+        if game_data.get(app_id) and game_data[app_id]['success']:
+            data = game_data[app_id]['data']
+            
+            filtered_data = {
+                'game_id': data.get('steam_appid'),
+                'title': data.get('name'),
+                'developer': ', '.join(data.get('developers', [])) if data.get('developers') else 'Unknown',
+                'publisher': ', '.join(data.get('publishers', [])) if data.get('publishers') else 'Unknown',
+                'genre': ', '.join([genre['description'] for genre in data.get('genres', [])]) if data.get('genres') else 'N/A',
+                'release_date': data.get('release_date', {}).get('date') if isinstance(data.get('release_date'), dict) else 'TBA',
+                'platforms': ', '.join([k for k, v in data.get('platforms', {}).items() if v]) if data.get('platforms') else 'Unknown',
+                'multiplayer_support': 'Multi-player' in [category['description'] for category in data.get('categories', [])] if data.get('categories') else False,
+                'DLC_count': len(data.get('dlc', [])) if data.get('dlc') else 0,
+                'max_concurrent_players': data.get('recommendations', {}).get('total', 0) if data.get('recommendations') else 0,
+                'positive_review_pct': data.get('metacritic', {}).get('score', 0) if data.get('metacritic') else 0,
+                'average_review_score': data.get('metacritic', {}).get('score', 0) if data.get('metacritic') else 0,
+                'review_sentiment_score': data.get('metacritic', {}).get('score', 0) if data.get('metacritic') else 0,
+                'number_of_reviews': data.get('recommendations', {}).get('total', 0) if data.get('recommendations') else 0,
+                'graphics_quality': 'High' if '4K' in data.get('short_description', '') else 'Standard',
+                'story_depth': 'Deep' if 'story' in data.get('short_description', '').lower() else 'Light'
+            }
+
+            # get Max Concurrent Players
+            max_players_url = f'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid={app_id}'
+            max_players_response = requests.get(max_players_url, timeout=10)
+
+            if max_players_response.status_code == 200:
+                max_players_data = max_players_response.json()
+                filtered_data['max_concurrent_players'] = max_players_data.get('response', {}).get('player_count', 0)
+            else:
+                print(f"Failed to fetch max players for App ID {app_id}: Status Code {max_players_response.status_code}")
+                filtered_data['max_concurrent_players'] = 0
+
+            all_games_data.append(filtered_data)
+        
+        print(f"Fetched data for App ID {app_id} ({idx + 1}/{len(app_ids)})")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data for App ID {app_id}: {e}")
+    
+    time.sleep(0.5)
+        
+
+
+df = pd.DataFrame(all_games_data, columns=columns)
+
+
+df.to_csv('games_data.csv', index=False)
+
+print("Data collection complete. Saved to 'games_data.csv'")
+
+
 
 ```
+
+
 
 ## Data Preparation
 
+The Steam library includes more than just released games. It also contains test builds, delisted titles, and placeholder entries. Many of these games/apps had non-standard release dates, such as “Q2 2025” or “Coming soon.” which were removed for the project.
 
-The Steam library includes not only actively released games but also test builds, delisted content, and placeholders. A significant portion of the entries featured non-standard release indicators such as “Q2 2025” or “Coming soon,”.
+To prepare the data for analysis, entries with missing data were removed.  Playtime values were converted into hours which originally were recorded in minutes.
 
-Entries with incomplete or ambiguous metadata were removed. Standardized formatting was applied to key fields, including release dates and platform tags, to produce a clean dataset suitable for reliable trend analysis.
-
-
-
-
-
-
-
-
+Here are the columns in the final merged dataset:
 ```{python}
 
 # Removing rows with any missing values
@@ -197,108 +289,226 @@ users_data['avg_playtime'] = users_data['playtime_2weeks'] / 14
 users_data['playtime_2weeks'] = users_data['playtime_2weeks'] / 60
 users_data['playtime_forever'] = users_data['playtime_forever'] / 60
 
+merged_data = users_data.merge(games_data, on='game_id', how='left')
+merged_data.dropna(inplace=True)
+for i, col in enumerate(merged_data.columns, start=1):
+    print(f"{i}. {col}")
+```
+
+# Analysis
+
+###  How much time are people spending on gaming per week?
+
+The chart below shows the number of hours active users spent gaming per week, based on Steam data. To be considered "active," users needed to have played at least a minute in the past two weeks.
+
+```{python}
+import plotly.express as px
+import plotly.graph_objects as go
+
+# Calculate weekly playtime
+active_users = users_data[users_data['playtime_2weeks'] > 0].copy()
+active_users['weekly_playtime_hours'] = active_users['playtime_2weeks'] / 2
+
+# Create histogram
+fig = px.histogram(
+    active_users,
+    x='weekly_playtime_hours',
+    nbins=30,
+    title='Distribution of Weekly Playtime Among Active Users',
+    labels={'weekly_playtime_hours': 'Average Weekly Playtime (Hours)'}
+)
+
+# Add the threshold line
+fig.add_vline(
+    x=20,
+    line_dash="dash",
+    line_color="red",
+    annotation_text="Addiction Threshold (20 hours)",
+    annotation_position="top right"
+)
+
+fig.update_layout(
+    xaxis_title='Average Weekly Playtime (Hours)',
+    yaxis_title='Number of Active Users',
+    bargap=0.1
+)
+
+fig.show()
+
 ```
 
 
-##  Engagement Levels
+The distribution is highly right-skewed, meaning that most users play only a few hours per week, while a smaller group spends a significantly larger amount of time gaming.
+
+A red vertical line is the 20-hour threshold, used thorughout the analysis as the gaming addiction theshold. As the chart shows, the majority of users fall well below this line, clustered between 0-10 hours per week.
+
+::: {.callout-note title="Why 20 Hours?"}
+
+The **20-hour threshold** used in this analysis is based on findings from the *Journal of Behavioral Addictions* [@ajp2021gaming], which reported that addicted individuals played an average of approximately 20 hours per week.
+
+:::
+
+
+
+
+While the histogram gives us a general sense of how often people play, it doesn't tell us much about **how** many users might be at risk. To get a clearer picture, users were categorized based on their weekly playtime.
+
+Let's break this down with a pie chart that groups active users into three categories:
+
+- **Casual Gamers** (under 7 hours per week)  
+- **Moderate Gamers** (7 to threshold hours per week)  
+- **Potentially Addicted** (above the threshold)
+
+
+Now, let’s take a look at how these groups compare visually:
+
+
 ```{python}
-active_users = users_data[users_data['playtime_2weeks'] > 0]
+import plotly.graph_objects as go
+import pandas as pd
 
-# calculate weekly playtime (in hours) for those active uses
-active_users['weekly_playtime_hours'] = (active_users['playtime_2weeks'] / 2)
+# Define threshold values and labels
+thresholds = list(range(20, 41, 5))
+labels = ['Casual Gamer', 'Moderate Gamer', 'Potential Addiction']
+colors = ['#46B2DE', '#AEE1AE', '#E57873'] 
+frames = []
+buttons = []
+
+# Generate pie chart data for each threshold
+for threshold in thresholds:
+    def categorize(hours):
+        if hours < 7:
+            return 'Casual Gamer'
+        elif hours < threshold:
+            return 'Moderate Gamer'
+        else:
+            return 'Potential Addiction'
+
+    df = active_users.copy()
+    df['category'] = df['weekly_playtime_hours'].apply(categorize)
+    counts = df['category'].value_counts()
+    values = [counts.get(label, 0) for label in labels]
+
+    frames.append(go.Pie(labels=labels, values=values, marker=dict(colors=colors)))
+
+    buttons.append(dict(
+        method="update",
+        label=f"{threshold} hrs",
+        args=[{"values": [values]}],
+    ))
+
+# Start with the first threshold's values
+init_counts = active_users['weekly_playtime_hours'].apply(lambda h: 'Casual Gamer' if h < 7 else 'Moderate Gamer' if h < 20 else 'Potential Addiction').value_counts()
+init_values = [init_counts.get(label, 0) for label in labels]
+
+# Create figure
+fig = go.Figure(
+    data=[go.Pie(labels=labels, values=init_values, marker=dict(colors=colors))],
+    layout=go.Layout(
+        title_text="Playtime Category Distribution",
+        title_x=0.5,
+        height=600,
+        margin=dict(t=80, b=100),
+        updatemenus=[dict(
+            type="dropdown",
+            direction="down",
+            x=0.01,             # for left position
+            xanchor="left",  # anchor to left
+            y=0,                # bottom
+            yanchor="bottom",
+            showactive=True,
+            buttons=buttons
+        )]
+    )
+)
+
+fig.show()
 
 
-# visualization the  distribution of weekly playtime
-plt.figure(figsize=(8, 6))
-plt.hist(active_users['weekly_playtime_hours'], bins=30, color='skyblue', edgecolor='black')
-plt.axvline(x=20, color='red', linestyle='--', label='Addiction Threshold (20 hours)')
-plt.xlabel('Average Weekly Playtime (Hours)')
-plt.ylabel('Number of Active Users')
-plt.title('Distribution of Weekly Playtime Among Active Users')
-plt.legend()
-plt.grid(True)
-plt.show()
 
 ```
 
+::: {.callout-note title="Interactive Feature"}
+Use the **dropdown menu below the chart** to adjust the *Addiction Threshold* between **20 and 40 hours** per week.  
+:::
+
+
+Based on the 20 hours per week threshold, the results show that a significant majority of users fall well below this level.
+
+**About 75.4%** of active users fall under **Casual Gamers**, meaning they play less than 7 hours per week. This suggests that most people use gaming as a light, recreational activity; something they enjoy in short sessions without making it a major part of their routine.
+
+**Moderate Gamers**, who play between 7 and 20 hours per week, make up **17.9%** of active users. This group shows healthy engagement, likely made up of people who play consistently but still manages to balance gaming with other parts of their lives.
+
+Only **6.6%** of users fall into the **Potential Addiction** category, playing more than 20 hours per week. While this number is not insignificant, it does suggest that gaming addiction is not widespread in this dataset. The overall pattern shows that the majority of gamers engage in moderate or minimal play.
+
+### What drives players to keep playing?
 ```{python}
 
-
-# Lets also cateogrize active users based on weekly playtime
-def categorize_playtime(hours):
-    if hours < 7:
-        return 'Casual Gamer'
-    elif hours < 20:
-        return 'Moderate Gamer'
-    else:
-        return 'Potential Addiction'
-
-active_users['playtime_category'] = active_users['weekly_playtime_hours'].apply(categorize_playtime)
-
-# total active users in each category
-active_category_counts = active_users['playtime_category'].value_counts()
-
-
-plt.figure(figsize=(6, 6))
-plt.pie(active_category_counts, labels=active_category_counts.index, autopct='%1.1f%%', startangle=140, colors=['#66c2a5', '#fc8d62', '#8da0cb'])
-plt.title('Active User Distribution by Playtime Category')
-plt.show()
-
-
-```
-
-
-When analyzing active user behavior, it turns out most people aren't glued to their screens for hours on end.
-
-In fact, 75.4% of users are casual gamers, playing for less than 7 hours a week. This group makes up the overwhelming majority, indicating that for most users, gaming is a light and occasional pastime.
-
-Another 17.9% fall into the moderate gamer category, playing between 7 to 20 hours per week. This suggests a healthy level of interest, frequent enough to show engagement, but not so much that it takes over their weekly schedule.
-
-Only 6.6% of users exceed 20 hours of playtime per week, which may point to a possible risk of gaming addiction. However, this small percentage suggests that excessive gaming behavior isn’t widespread in this dataset.
-
-A closer look at the playtime distribution reveals a long tail, a small number of users play for 40+ hours per week. These outliers might be worth exploring further, but overall, they don’t represent the norm.
-
-So what does all of this tell us? Most people play games casually. A smaller group plays regularly, but still within a reasonable range. Very few exhibit playtime that raises concerns about overuse.
-
-This paints a picture of gaming as something people enjoy in moderation, not as a widespread addictive behavior.
-
-
-
-## What drives players to keep playing?
-```{python}
-# Merging user_data with games_data on game_id
 merged_data = users_data.merge(games_data, on='game_id', how='left')
 merged_data.dropna(inplace=True)
 
-
+# filter only active users (played in last 2 weeks)
 merged_data = merged_data[merged_data['playtime_2weeks'] > 0]
 
-
+# convert 'multiplayer_support' to numeric for correlation
 merged_data['multiplayer_support'] = merged_data['multiplayer_support'].astype(int)
 
-
-# game design elements for analysis
-design_elements = ["DLC_count", "multiplayer_support", "max_concurrent_players", "average_review_score"]
-
-
+# aply log transformation to reduce skewness
 merged_data['playtime_forever'] = np.log1p(merged_data['playtime_forever'])
+merged_data['playtime_2weeks'] = np.log1p(merged_data['playtime_2weeks'])
 merged_data['DLC_count'] = np.log1p(merged_data['DLC_count'])
 merged_data['max_concurrent_players'] = np.log1p(merged_data['max_concurrent_players'])
 merged_data['average_review_score'] = np.log1p(merged_data['average_review_score'])
-merged_data['playtime_2weeks'] = np.log1p(merged_data['playtime_2weeks'])
 
-correlation_results = merged_data[["playtime_forever"] + design_elements].corr()
+# select certain columns for correlation
+design_elements = ["DLC_count", "multiplayer_support", "max_concurrent_players", "average_review_score"]
+corr_matrix = merged_data[["playtime_forever"] + design_elements].corr().round(2)
 
+# Interactive heatmap with Plotly
+fig = px.imshow(
+    corr_matrix,
+    text_auto=True,
+    color_continuous_scale="RdBu_r",
+    title="Correlation Between Game Design Elements and Playtime",
+    aspect="auto"
+)
 
-# heatmap
-plt.figure(figsize=(8, 6))
-sns.heatmap(correlation_results, annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Correlation Between Game Design Elements and Playtime")
-plt.show()
+fig.update_layout(
+    xaxis_title="Game Design Elements",
+    yaxis_title="Playtime & Design Elements",
+    coloraxis_colorbar=dict(title="Correlation"),
+    title_x=0.5,
+    margin=dict(t=80, l=60, r=60, b=60)
+)
+
+fig.show()
 
 ```
 
-hypothesis test
+Observe the heatmap above that shows how different game design elements relate to long-term playtime. 
+
+One of the strongest correlations shows up with **multiplayer support**. The games that let people play together, whether cooperatively or competitively, tend to create a more social and engaging experience. Titles like *Counter-Strike: Global Offensive*, *Dota 2*, or *Valorant* are popular multiplayer games. Not only can you can team up with friends but you can also go head-to-head with strangers. This social side of these games can turn a quick session into a regular habit.
+
+
+**Maximum concurrent players** also shows a strong positive correlation. This probably has a lot to do with the size and popularity of certain games. Titles like *PUBG*, *Rust*, or *ARK: Survival Evolved* are built for large-scale multiplayer, where you enter into a world with lots of other players. The more people there are online, the more unpredictable and exciting each session becomes. No two matches feel the same, and that variety can really keep players coming back.
+
+
+The number of **downloadable content packs (DLCs)** also appears to play a role. Games like *The Sims 4* or *Cities: Skylines* frequently release DLCs that expand gameplay, add new mechanics, or refresh the visual experience. Players likley find it fun to explore new contents that can be added over time which makes them stick aroung longer.
+
+Interestingly, **average review scores** also correlate positively with playtime, but to a lesser degree. While good reviews may attract players initially, they don’t seem to keep players engaged in the same way that gameplay mechanics and social features do. 
+
+###  Hypothesis Testing: Multiplayer Support and Gaming Addiction
+
+Let's investigate whether there's a relationship between multiplayer support and the likelihood of gaming addiction.
+
+- **Null Hypothesis (H₀):**  
+    There is no association between multiplayer support and addiction status. In other words, the proportion of addicted players is the same regardless of whether a game has multiplayer support or not.
+
+- **Alternative Hypothesis (H₁):**  
+    There is an association between multiplayer support and addiction status. That is, the proportion of addicted players differs between games with and without multiplayer support.
+
+
+::: {.callout-note title="Chi-Square Test Result"}
 ```{python}
 
 #hyopthesis testing
@@ -320,29 +530,25 @@ df_filtered['addicted'] = (df_filtered['playtime_2weeks'] > 40).astype(int)
 # Create contingency table between multiplayer_support and addicted status
 contingency_table = pd.crosstab(df_filtered['multiplayer_support'], df_filtered['addicted'])
 
-print("Contingency Table:")
-print(contingency_table)
+#print("Contingency Table:")
+#print(contingency_table)
 
 # Perform the chi-square test
 chi2, p, dof, expected = chi2_contingency(contingency_table)
 print(f"\nChi-square Statistic: {chi2:.4f}")
 print(f"Degrees of Freedom: {dof}")
 print(f"P-value: {p}")
-
-
-prop_df = df_filtered.groupby('multiplayer_support')['addicted'].mean().reset_index()
-prop_df['Game Type'] = prop_df['multiplayer_support'].map({0: 'Single-player', 1: 'Multiplayer'})
-
-plt.figure(figsize=(8, 5))
-sns.barplot(x='Game Type', y='addicted', data=prop_df)
-plt.ylabel("Proportion of Addicted Players")
-plt.title("Proportion of Addicted Players by Game Type")
-
-plt.ylim(0, 0.3) 
-plt.show()
 ```
+:::
 
-other tests
+Since the p-value is extremely small (p < 0.05), we reject the null hypothesis. This indicates that there is a statistically significant association between multiplayer support and gaming addiction status. In summary, the data provide strong evidence that the proportion of players classified as addicted differs significantly between games with and without multiplayer support.
+
+
+#### Let’s Go Further: T-Tests on Other Game Features
+
+To explore this further, let's run t-tests to compare whether certain game features differ significantly between addicted and non-addicted players.
+
+::: {.callout-note title="Chi-Square Test Result"}
 ```{python}
 
 import pandas as pd
@@ -368,107 +574,276 @@ group_addicted = df_filtered[df_filtered['addicted'] == 1]
 group_non_addicted = df_filtered[df_filtered['addicted'] == 0]
 
 # Function to run and print t-test results for a given predictor
-def run_ttest(predictor):
+def run_ttest(predictor,proper_name):
     t_stat, p_value = ttest_ind(group_addicted[predictor], group_non_addicted[predictor], nan_policy='omit')
-    print(f"T-test for {predictor}:")
+    print(f"T-test for {proper_name}:")
     print(f"  t-statistic: {t_stat:.4f}")
     print(f"  p-value: {p_value:.4f}\n")
 
 # Run t-tests for each predictor
-run_ttest('DLC_count')
-run_ttest('max_concurrent_players')
-run_ttest('average_review_score')
+run_ttest('DLC_count', 'DLC Count')
+run_ttest('max_concurrent_players', 'Maxiumum Concurrent Players')
+run_ttest('average_review_score', 'Average Review Score')
 
 ```
+:::
 
-## Q3
+The results show a clear difference in **DLC count** between the two groups. With a t-statistic of 3.99 and a p-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
+
+We can see a similar pattern with **maximum concurrent players**. The t-statistic came out to 3.91 with the same p-value, which suggests that addicted players tend to be more drawn to games with large, active communities. 
+
+On the flip side, **average review score** didn’t show any real difference between the groups. The t-statistic was -0.92, and the p-value was around 0.35, which tells us that reviews don’t really influence whether someone ends up playing a game excessively. A great review might convince someone to try a game, but it doesn’t necessarily mean they’ll keep coming back for dozens of hours.
+
+Altogether, these results back up what we saw earlier in the correlation heatmap. Social features and new downloadable contents seem to play a much bigger role in keeping players in the game than just the game’s rating/review.
+
+
+
+## What Genres Are Most Engaging?
+
+To understand what types of games addicted and non-addicted users are spending time on, let's break down total playtime by game genre. The charts below compare the top five genres based on total playtime for each group.
+
+
 ```{python}
-
 
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import pearsonr
+import plotly.express as px
+import plotly.graph_objects as go
 
+# Merge and clean
+merged = users_data.merge(games_data, on="game_id", how="inner")
+merged = merged.dropna(subset=["genre", "playtime_2weeks"])
 
-# Merge user data with game data
-merged_data = users_data.merge(games_data, on="game_id", how="inner")
+# Split groups
+addicted = merged[merged["playtime_2weeks"] > 40].copy()
+non_addicted = merged[(merged["playtime_2weeks"] > 0) & (merged["playtime_2weeks"] <= 40)].copy()
 
-merged_data = merged_data[merged_data['playtime_2weeks'] > 40]
+# Calculate top 5 genres for each group
+def top_genres(df):
+    return df.groupby("genre")["playtime_2weeks"].sum().sort_values(ascending=False).head(5).reset_index()
 
-genre_playtime = merged_data.groupby("genre")["playtime_2weeks"].sum().sort_values(ascending=False)
+addicted_top = top_genres(addicted)
+non_addicted_top = top_genres(non_addicted)
 
-# Plot genre vs. total playtime
-plt.figure(figsize=(12, 6))
-sns.barplot(x=genre_playtime.index[:10], y=genre_playtime.values[:10])
-plt.xticks(rotation=30, ha="right")  # Rotating labels for better readability
-plt.xlabel("Game Genre")
-plt.ylabel("Total Playtime (hours)")
-plt.title("Top 10 Most Engaging Game Genres for addicted users by Playtime")
-plt.tight_layout()  # Adjust layout to prevent clipping
-plt.show()
+# Create consistent genre-color mapping
+all_genres = pd.concat([addicted_top["genre"], non_addicted_top["genre"]]).unique()
+colors = px.colors.qualitative.Pastel
+genre_colors = {genre: colors[i % len(colors)] for i, genre in enumerate(sorted(all_genres))}
 
-addiction_correlation, _ = pearsonr(merged_data["playtime_forever"], merged_data["average_review_score"])
+# Addicted plot
+fig1 = px.bar(
+    addicted_top,
+    x="genre",
+    y="playtime_2weeks",
+    title="Top 5 Genres by Total Playtime (Addicted Users)",
+    labels={"playtime_2weeks": "Total Playtime (Hours)", "genre": "Game Genre"},
+    color="genre",
+    color_discrete_map=genre_colors
+)
+
+fig1.update_layout(showlegend=False, xaxis_tickangle=-30)
+fig1.show()
+
 
 ```
 
+
+# 
+For addicted users, Strategy games take the lead with the highest total playtime. This suggests that players who spend extended hours gaming may be especially drawn to games that involve planning, decision-making, and long sessions. Following Strategy include RPGs, Action, and hybrid genres like Action-Adventure-RPG, which combine exploration, combat, and story progression in one package.
+
+These types of games often include deep mechanics and flexible systems which encourages prolonged engagement. They tend to be highly replayable by offering varied experiences across different playthroughs.
+
+
 ```{python}
 
+# Non-addicted plot
+fig2 = px.bar(
+    non_addicted_top,
+    x="genre",
+    y="playtime_2weeks",
+    title="Top 5 Genres by Total Playtime (Non-Addicted Users)",
+    labels={"playtime_2weeks": "Total Playtime (Hours)", "genre": "Game Genre"},
+    color="genre",
+    color_discrete_map=genre_colors
+)
 
+fig2.update_layout(showlegend=False, xaxis_tickangle=-30)
+
+
+fig2.show()
+```
+
+# 
+Non-addicted players, on the other hand, spend most of their time on Action and Action-Adventure genres. These games tend to offer quick, exciting gameplay in small sessions for more casual play. Titles that fall into these genres often include straightforward objectives, and fast-paced mechanics with visually engaging environments.
+
+
+While both groups enjoy genres that offer action and adventure, addicted users lean more heavily into genres that demand tactical planning and problem-solving, like Strategy and RPGs. Non-addicted users appear to prefer more fast-paced and accessible experiences. 
+
+
+# Predicting Gaming Addiction
+
+After exploring trends in playtime, game design, and genre preferences, the next  step is to see if we could predict gaming addiction using machine learning.
+
+To do this, I trained and tested several classification models using both numerical features (like total number of games owned, average review score, and number of reviews) and categorical features (such as genre, platforms, and whether a game supports multiplayer). Together, these features offer a broad snapshot of both the player's behavior and the characteristics of the games they engage with.
+
+The goal here is to build a model that can distinguish between users who are likely to be addicted and those who are not, based on the types of games they play and how they interact with them.
+
+Below is a comparison of the top-performing models. 
+
+
+::: {.callout-note}
+
+Using the dropdown, you can check out the chart below to view how each model performed.
+
+:::
+
+
+
+
+
+```{python}
+import plotly.graph_objects as go
+
+# Define model names and metrics
+models = ["Logistic Regression", "XGBoost", "KNN", "Bagging", "Decision Tree", "SVM"]
+
+# Scores for "Not Addicted" and "Addicted"
+scores = {
+    "Logistic Regression": {
+        "Not Addicted": [0.8101, 0.7467, 0.7771],
+        "Addicted": [0.7647, 0.8246, 0.7935]
+    },
+    "XGBoost": {
+        "Not Addicted": [0.8611, 0.7616, 0.8083],
+        "Addicted": [0.7860, 0.8769, 0.8289]
+    },
+    "KNN": {
+        "Not Addicted": [0.7559, 0.6574, 0.7032],
+        "Addicted": [0.6964, 0.7873, 0.7391]
+    },
+    "Bagging": {
+        "Not Addicted": [0.8236, 0.7654, 0.7934],
+        "Addicted": [0.7805, 0.8358, 0.8072]
+    },
+    "Decision Tree": {
+        "Not Addicted": [0.8704, 0.7002, 0.7761],
+        "Addicted": [0.7488, 0.8955, 0.8156]
+    },
+    "SVM": {
+        "Not Addicted": [0.8095, 0.7281, 0.7667],
+        "Addicted": [0.7525, 0.8283, 0.7886] 
+    }
+}
+
+# Initialize the first model (XGBoost) as default
+initial_model = "XGBoost"
+metrics = ["Precision", "Recall", "F1-Score"]
+fig = go.Figure()
+
+fig.add_trace(go.Bar(
+    name="Not Addicted",
+    x=metrics,
+    y=scores[initial_model]["Not Addicted"],
+    marker_color="#2a9d8f"
+))
+fig.add_trace(go.Bar(
+    name="Addicted",
+    x=metrics,
+    y=scores[initial_model]["Addicted"],
+    marker_color="#e76f51"
+))
+
+# Dropdown buttons
+buttons = []
+for model in models:
+    buttons.append(dict(
+        label=model,
+        method="update",
+        args=[{"y": [scores[model]["Not Addicted"], scores[model]["Addicted"]],
+               "x": [metrics, metrics]},
+              {"title": f"Classification Metrics for {model}"}]
+    ))
+
+# Layout
+fig.update_layout(
+    updatemenus=[dict(
+        buttons=buttons,
+        direction="down",
+        showactive=True,
+        x=0.99,
+        xanchor="right",
+        y=1.15,
+        yanchor="top"
+    )],
+    barmode="group",
+    title=f"Classification Metrics for {initial_model}",
+    yaxis_title="Score",
+    yaxis=dict(range=[0.6, 0.9]),
+    height=500
+)
+
+fig.show(config={"displayModeBar": False})
+
+```
+
+#
+Based on the comparison, XGBoost is the top-performing model, with the highest F1-score for the Addicted class (0.8289) and strong, balanced metrics across both classes. Models like Bagging and Decision Tree also performed well, with solid precision and recall, while Logistic Regression was a good starting point, but its recall was a bit lower. On the other hand, KNN and SVM struggled, especially in identifying "Not Addicted" users accurately. This suggests that more advanced ensemble-based models are better suited for capturing the patterns behind gaming addiction. 
+
+Now that we know XGBoost performs best, let's take a closer look at which features had the most influence in its predictions:
+
+```{python}
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import pearsonr
+import plotly.express as px
 
+# Top 10 features and importance scores
+feature_data = pd.DataFrame({
+    "Feature": [
+        "game_count",
+        "developer_Aurora Studio",
+        "number_of_reviews",
+        "genre_Casual",
+        "genre_Action",
+        "genre_Action, Adventure, Indie",
+        "publisher_Slitherine Ltd.",
+        "max_concurrent_players",
+        "publisher_Valve",
+        "publisher_Team17"
+    ],
+    "Importance": [
+        0.028460,
+        0.022018,
+        0.021947,
+        0.019471,
+        0.019317,
+        0.018006,
+        0.016553,
+        0.014739,
+        0.014415,
+        0.013994
+    ]
+})
 
-# Merge user data with game data
-merged_data = users_data.merge(games_data, on="game_id", how="inner")
+# Create interactive horizontal bar chart
+fig = px.bar(
+    feature_data.sort_values("Importance"),
+    x="Importance",
+    y="Feature",
+    orientation="h",
+    title="Top 10 Most Important Features in XGBoost Model",
+    labels={"Importance": "Feature Importance", "Feature": "Feature"},
+    color="Importance"
+)
 
-merged_data = merged_data[merged_data['playtime_2weeks'] > 0]
+fig.update_traces(marker_color="#3b82f6")
 
-merged_data = merged_data[merged_data['playtime_2weeks'] < 40]
+fig.update_layout(height=500, yaxis_title="", coloraxis_showscale=False)
 
-genre_playtime = merged_data.groupby("genre")["playtime_2weeks"].sum().sort_values(ascending=False)
-
-# Plot genre vs. total playtime
-plt.figure(figsize=(12, 6))
-sns.barplot(x=genre_playtime.index[:10], y=genre_playtime.values[:10])
-plt.xticks(rotation=30, ha="right")  # Rotating labels for better readability
-plt.xlabel("Game Genre")
-plt.ylabel("Total Playtime (hours)")
-plt.title("Top 10 Most Engaging Game Genres for non-addicted users by Playtime")
-plt.tight_layout()  # Adjust layout to prevent clipping
-plt.show()
-
-addiction_correlation, _ = pearsonr(merged_data["playtime_forever"], merged_data["average_review_score"])
+# Hide Plotly mode bar
+fig.show(config={"displayModeBar": False})
 
 
 ```
 
 
 
-## Heading
-```{python}
+ Interestingly, the number of games owned came out as the most influential feature, which makes sense since players who own a large library may be more engaged overall. Specific developers and publishers also played a role, with games from Aurora Studio, Valve, and Team17 showing up frequently among addicted users. Certain genres stood out too: titles labeled as Casual, Action, or hybrid genres like Action-Adventure-Indie carried significant weight in the model. The number of user reviews and maximum concurrent players were also important, suggesting that both popularity and social engagement may contribute to prolonged playtime. Overall, these features paint a picture of gaming addiction as a mix of player behavior, game design, and community-driven influence.
 
-```
-
-
-## Heading
-```{python}
-
-```
-
-
-## Heading
-```{python}
-
-```
-
-
-
-
-
-Here's an example of citing a source [see @phil99, pp. 33-35]. Be sure the source information is entered in "BibTeX" form in the `references.bib` file.
-
-
-The bibliography will automatically be generated, listing all sources in the `.bib` file.
