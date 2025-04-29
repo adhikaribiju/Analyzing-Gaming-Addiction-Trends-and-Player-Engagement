@@ -844,6 +844,11 @@ fig.show(config={"displayModeBar": False})
 ```
 
 
-
+#
  Interestingly, the number of games owned came out as the most influential feature, which makes sense since players who own a large library may be more engaged overall. Specific developers and publishers also played a role, with games from Aurora Studio, Valve, and Team17 showing up frequently among addicted users. Certain genres stood out too: titles labeled as Casual, Action, or hybrid genres like Action-Adventure-Indie carried significant weight in the model. The number of user reviews and maximum concurrent players were also important, suggesting that both popularity and social engagement may contribute to prolonged playtime. Overall, these features paint a picture of gaming addiction as a mix of player behavior, game design, and community-driven influence.
 
+
+
+# Future Work
+
+There are lots of exciting possibilities and ideas for building on this work. One idea is be to apply more advanced neural networks, like RNNs or transformer models, to capture even deeper patterns in player behavior and push prediction accuracy even higher. Another is to use time series analysis to track how gaming habits change over time which could give a better picture of when and how addiction risks start to form. This approach would require downloading and tracking player data from the API over several months. Lastly, it would also be interesting to create dynamic, real-time dashboards to monitor gaming trends as they happen, making the data easier to explore. 
