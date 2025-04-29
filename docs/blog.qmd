@@ -679,6 +679,105 @@ Non-addicted players, on the other hand, spend most of their time on Action and 
 While both groups enjoy genres that offer action and adventure, addicted users lean more heavily into genres that demand tactical planning and problem-solving, like Strategy and RPGs. Non-addicted users appear to prefer more fast-paced and accessible experiences. 
 
 
+## Analyzing Gamers Sentiments
+
+
+```{python}
+
+sentiment_counts_nonaddicted = {
+    'Positive': 1438,
+    'Neutral': 523,
+    'Negative': 519
+}
+
+
+sentiment_counts_addicted = {
+    'Positive': 1543,
+    'Neutral': 576,
+    'Negative': 361
+}
+
+# Convert to DataFrame for easier handling
+df_sentiments = pd.DataFrame({
+    'Sentiment': ['Positive', 'Neutral', 'Negative'],
+    'Non-Addicted': [sentiment_counts_nonaddicted.get(sentiment, 0) for sentiment in ['Positive', 'Neutral', 'Negative']],
+    'Addicted': [sentiment_counts_addicted.get(sentiment, 0) for sentiment in ['Positive', 'Neutral', 'Negative']]
+})
+
+# Create grouped bar chart
+fig = go.Figure(data=[
+    go.Bar(name='Non-Addicted (Playtime < 40)', x=df_sentiments['Sentiment'], y=df_sentiments['Non-Addicted']),
+    go.Bar(name='Addicted (Playtime > 40)', x=df_sentiments['Sentiment'], y=df_sentiments['Addicted'])
+])
+
+# Customize layout
+fig.update_layout(
+    title='Sentiment Distribution: Non-Addicted vs Addicted Players',
+    xaxis_title='Sentiment Category',
+    yaxis_title='Number of Reviews',
+    barmode='group',
+    template='plotly_white',
+    legend=dict(x=0.5, y=1.15, xanchor='center', orientation='h'),
+    height=500,
+    width=800
+)
+
+# Show interactive plot
+fig.show()
+
+
+
+```
+
+
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
+
+user_games_combined = users_data.merge(games_data, on='game_id', how='left')
+user_games_combined.dropna(inplace=True)
+#rename the col for merge
+reviews_data.rename(columns={'steamid': 'user_id'}, inplace=True)
+
+df_reviews = user_games_combined.merge(reviews_data, on=['user_id', 'game_id'], how='inner')
+
+
+# Game IDs and names
+top_game_ids = [730, 578080]
+top_game_ids_name = ['Counter-Strike 2', 'PUBG: Battlegrounds']
+
+# Filter reviews for these games
+df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
+
+# Filter reviews for these games
+df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
+
+ind = 0
+# Generate and display word clouds for each game
+for game_id in top_game_ids:
+    game_reviews = df_top_games_reviews[df_top_games_reviews["game_id"] == game_id]["review"].dropna()
+    text = " ".join(game_reviews)
+
+    # Generate word cloud
+    wordcloud = WordCloud(width=800, height=400, background_color="white", colormap="viridis").generate(text)
+
+    # Plot word cloud
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.title(f"Word Cloud for Game ID: {top_game_ids_name[ind]}")
+    plt.show()
+    ind += 1
+
+
+```
+
+
+
+
 # Predicting Gaming Addiction
 
 After exploring trends in playtime, game design, and genre preferences, the next  step is to see if we could predict gaming addiction using machine learning.
