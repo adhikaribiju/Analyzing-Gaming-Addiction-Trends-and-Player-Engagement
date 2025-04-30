@@ -1,6 +1,5 @@
 ---
 title: "Analyzing Gaming Addiction Trends and Player Engagement"
-#subtitle: "Spring 2025"
 author: "Bijay Adhikari"
 bibliography: references.bib
 nocite: |
@@ -299,9 +298,13 @@ for i, col in enumerate(merged_data.columns, start=1):
 
 ###  How much time are people spending on gaming per week?
 
-The chart below shows the number of hours active users spent gaming per week, based on Steam data. To be considered "active," users needed to have played at least a minute in the past two weeks.
+@fig-distribution below shows the number of hours active users spent gaming per week, based on Steam data. To be considered "active," users needed to have played at least a minute in the past two weeks.
 
 ```{python}
+
+#| label: fig-distribution
+#| fig-cap: "Weekly playtime distribution among active users, with a 20-hour threshold shown in red."
+
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -360,10 +363,15 @@ Let's break this down with a pie chart that groups active users into three categ
 - **Potentially Addicted** (above the threshold)
 
 
-Now, let’s take a look at how these groups compare visually:
+Now, let’s take a look at how these groups compare visually using @fig-piechart:
 
 
 ```{python}
+
+#| label: fig-piechart
+#| fig-cap: "Distribution of users across playtime categories: Casual, Moderate, and Potential Addiction."
+
+
 import plotly.graph_objects as go
 import pandas as pd
 
@@ -444,6 +452,9 @@ Only **6.6%** of users fall into the **Potential Addiction** category, playing m
 ### What drives players to keep playing?
 ```{python}
 
+#| label: fig-heatmap
+#| fig-cap: "Heatmap displaying the correlation between game design features and player playtime metrics."
+
 merged_data = users_data.merge(games_data, on='game_id', how='left')
 merged_data.dropna(inplace=True)
 
@@ -485,7 +496,7 @@ fig.show()
 
 ```
 
-Observe the heatmap above that shows how different game design elements relate to long-term playtime. 
+Observe the heatmap above (@fig-heatmap) that shows how different game design elements relate to long-term playtime. 
 
 One of the strongest correlations shows up with **multiplayer support**. The games that let people play together, whether cooperatively or competitively, tend to create a more social and engaging experience. Titles like *Counter-Strike: Global Offensive*, *Dota 2*, or *Valorant* are popular multiplayer games. Not only can you can team up with friends but you can also go head-to-head with strangers. This social side of these games can turn a quick session into a regular habit.
 
@@ -530,8 +541,6 @@ df_filtered['addicted'] = (df_filtered['playtime_2weeks'] > 40).astype(int)
 # Create contingency table between multiplayer_support and addicted status
 contingency_table = pd.crosstab(df_filtered['multiplayer_support'], df_filtered['addicted'])
 
-#print("Contingency Table:")
-#print(contingency_table)
 
 # Perform the chi-square test
 chi2, p, dof, expected = chi2_contingency(contingency_table)
@@ -541,7 +550,7 @@ print(f"P-value: {p}")
 ```
 :::
 
-Since the p-value is extremely small (p < 0.05), we reject the null hypothesis. This indicates that there is a statistically significant association between multiplayer support and gaming addiction status. In summary, the data provide strong evidence that the proportion of players classified as addicted differs significantly between games with and without multiplayer support.
+Since the $p$-value is extremely small ($p < 0.05$), we reject the null hypothesis. This indicates that there is a statistically significant association between multiplayer support and gaming addiction status. In summary, the data provide strong evidence that the proportion of players classified as addicted differs significantly between games with and without multiplayer support.
 
 
 #### Let’s Go Further: T-Tests on Other Game Features
@@ -588,11 +597,11 @@ run_ttest('average_review_score', 'Average Review Score')
 ```
 :::
 
-The results show a clear difference in **DLC count** between the two groups. With a t-statistic of 3.99 and a p-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
+The results show a clear difference in **DLC count** between the two groups. With a t-statistic of 3.99 and a $p$-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
 
-We can see a similar pattern with **maximum concurrent players**. The t-statistic came out to 3.91 with the same p-value, which suggests that addicted players tend to be more drawn to games with large, active communities. 
+We can see a similar pattern with **maximum concurrent players**. The t-statistic came out to 3.91 with the same $p$-value, which suggests that addicted players tend to be more drawn to games with large, active communities. 
 
-On the flip side, **average review score** didn’t show any real difference between the groups. The t-statistic was -0.92, and the p-value was around 0.35, which tells us that reviews don’t really influence whether someone ends up playing a game excessively. A great review might convince someone to try a game, but it doesn’t necessarily mean they’ll keep coming back for dozens of hours.
+On the flip side, **average review score** didn’t show any real difference between the groups. The t-statistic was -0.92, and the $p$-value was around 0.35, which tells us that reviews don’t really influence whether someone ends up playing a game excessively. A great review might convince someone to try a game, but it doesn’t necessarily mean they’ll keep coming back for dozens of hours.
 
 Altogether, these results back up what we saw earlier in the correlation heatmap. Social features and new downloadable contents seem to play a much bigger role in keeping players in the game than just the game’s rating/review.
 
@@ -604,6 +613,9 @@ To understand what types of games addicted and non-addicted users are spending t
 
 
 ```{python}
+
+#| label: fig-genres
+#| fig-cap: "Most-played game genres among users with high weekly playtime."
 
 import pandas as pd
 import plotly.express as px
@@ -655,6 +667,10 @@ These types of games often include deep mechanics and flexible systems which enc
 
 ```{python}
 
+#| label: fig-genres2
+#| fig-cap: "Most-played game genres among non-addicted users."
+
+
 # Non-addicted plot
 fig2 = px.bar(
     non_addicted_top,
@@ -683,6 +699,9 @@ While both groups enjoy genres that offer action and adventure, addicted users l
 
 
 ```{python}
+
+#| label: fig-sentiments
+#| fig-cap: " Distribution of review sentiment across addicted and non-addicted players by sentiment category."
 
 sentiment_counts_nonaddicted = {
     'Positive': 1438,
@@ -717,13 +736,13 @@ fig.update_layout(
     yaxis_title='Number of Reviews',
     barmode='group',
     template='plotly_white',
-    legend=dict(x=0.5, y=1.15, xanchor='center', orientation='h'),
+    legend=dict(x=1, y=1.15, xanchor='left', orientation='v'),
     height=500,
     width=800
 )
 
 # Show interactive plot
-fig.show()
+fig.show(config={"displayModeBar": False})
 
 
 
@@ -732,8 +751,10 @@ fig.show()
 
 
 ```{python}
-import pandas as pd
-import matplotlib.pyplot as plt
+
+#| label: fig-wordcloud
+#| fig-cap: "Word cloud visualization of user review text for Counter-Strike 2, highlighting commonly mentioned terms."
+
 from wordcloud import WordCloud
 
 
@@ -756,27 +777,75 @@ df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
 df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
 
 ind = 0
-# Generate and display word clouds for each game
-for game_id in top_game_ids:
-    game_reviews = df_top_games_reviews[df_top_games_reviews["game_id"] == game_id]["review"].dropna()
-    text = " ".join(game_reviews)
+game_id = top_game_ids[ind]
+# Generate and display word clouds for first game
 
-    # Generate word cloud
-    wordcloud = WordCloud(width=800, height=400, background_color="white", colormap="viridis").generate(text)
+game_reviews = df_top_games_reviews[df_top_games_reviews["game_id"] == game_id]["review"].dropna()
+text = " ".join(game_reviews)
 
-    # Plot word cloud
-    plt.figure(figsize=(10, 5))
-    plt.imshow(wordcloud, interpolation="bilinear")
-    plt.axis("off")
-    plt.title(f"Word Cloud for Game ID: {top_game_ids_name[ind]}")
-    plt.show()
-    ind += 1
+# Generate word cloud
+wordcloud = WordCloud(width=800, height=400, background_color="white", colormap="viridis").generate(text)
+
+# Plot word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title(f"Word Cloud for Game ID: {top_game_ids_name[ind]}")
+plt.show()
+ind += 1
 
 
 ```
 
+# 
+Review ko kura
+
+```{python}
+
+#| label: fig-wordcloud2
+#| fig-cap: "Word cloud visualization of user review text for PUBG: Battlegrounds, highlighting commonly mentioned terms."
+
+from wordcloud import WordCloud
 
 
+user_games_combined = users_data.merge(games_data, on='game_id', how='left')
+user_games_combined.dropna(inplace=True)
+#rename the col for merge
+reviews_data.rename(columns={'steamid': 'user_id'}, inplace=True)
+
+df_reviews = user_games_combined.merge(reviews_data, on=['user_id', 'game_id'], how='inner')
+
+
+# Game IDs and names
+top_game_ids = [730, 578080]
+top_game_ids_name = ['Counter-Strike 2', 'PUBG: Battlegrounds']
+
+# Filter reviews for these games
+df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
+
+# Filter reviews for these games
+df_top_games_reviews = df_reviews[df_reviews["game_id"].isin(top_game_ids)]
+
+ind = 1
+game_id = top_game_ids[ind]
+# Generate and display word clouds for second game
+
+game_reviews = df_top_games_reviews[df_top_games_reviews["game_id"] == game_id]["review"].dropna()
+text = " ".join(game_reviews)
+
+# Generate word cloud
+wordcloud = WordCloud(width=800, height=400, background_color="white", colormap="viridis").generate(text)
+
+# Plot word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.title(f"Word Cloud for Game ID: {top_game_ids_name[ind]}")
+plt.show()
+
+
+
+```
 
 # Predicting Gaming Addiction
 
@@ -800,6 +869,11 @@ Using the dropdown, you can check out the chart below to view how each model per
 
 
 ```{python}
+
+#| label: fig-metrics
+#| fig-cap: " Precision, recall, and F1-score for differnt models across both addicted and non-addicted user classes."
+
+
 import plotly.graph_objects as go
 
 # Define model names and metrics
@@ -890,6 +964,12 @@ Based on the comparison, XGBoost is the top-performing model, with the highest F
 Now that we know XGBoost performs best, let's take a closer look at which features had the most influence in its predictions:
 
 ```{python}
+
+
+#| label: fig-featureimportance
+#| fig-cap: "Top 10 features ranked by importance in the XGBoost model used to predict gaming addiction."
+
+
 import pandas as pd
 import plotly.express as px
 
