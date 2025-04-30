@@ -698,23 +698,18 @@ While both groups enjoy genres that offer action and adventure, addicted users l
 ## Analyzing Gamers Sentiments
 
 
+In order to understand how players feel about the games they play, I conducted a sentiment analysis on user reviews using TextBlob, a natural language processing library that assigns polarity scores to text. Each review was categorized as Positive, Neutral, or Negative based on its sentiment polarity.
+
+
+
 ```{python}
 
 #| label: fig-sentiments
 #| fig-cap: " Distribution of review sentiment across addicted and non-addicted players by sentiment category."
 
-sentiment_counts_nonaddicted = {
-    'Positive': 1438,
-    'Neutral': 523,
-    'Negative': 519
-}
-
-
-sentiment_counts_addicted = {
-    'Positive': 1543,
-    'Neutral': 576,
-    'Negative': 361
-}
+counts_df = pd.read_csv("../results/sentiment_proportions.csv")
+sentiment_counts_nonaddicted = dict(zip(counts_df['Sentiment'], counts_df['Proportion_NonAddicted']))
+sentiment_counts_addicted = dict(zip(counts_df['Sentiment'], counts_df['Proportion_Addicted']))
 
 # Convert to DataFrame for easier handling
 df_sentiments = pd.DataFrame({
@@ -733,12 +728,13 @@ fig = go.Figure(data=[
 fig.update_layout(
     title='Sentiment Distribution: Non-Addicted vs Addicted Players',
     xaxis_title='Sentiment Category',
-    yaxis_title='Number of Reviews',
+    yaxis_title='Proportion of Reviews',
     barmode='group',
     template='plotly_white',
     legend=dict(x=1, y=1.15, xanchor='left', orientation='v'),
     height=500,
-    width=800
+    width=800,
+    yaxis_tickformat=".0%"
 )
 
 # Show interactive plot
@@ -747,6 +743,8 @@ fig.show(config={"displayModeBar": False})
 
 
 ```
+
+@fig-sentiments shows that addicted players leave a slightly higher proportion of positive reviews compared to non-addicted ones (about 63% vs. 59%). Neutral reviews are fairly consistent across both groups, but what's more interesting is that non-addicted users tend to leave more negative reviews. This might suggest that those who spend less time in-game are also more harsh or less emotionally invested, while more engaged players are either more satisfied or more forgiving of a game's flaws.
 
 
 
@@ -797,8 +795,10 @@ ind += 1
 
 ```
 
-# 
-Review ko kura
+
+Let’s take a look at @fig-wordcloud. It  highlights the most frequently used words in reviews for Counter-Strike 2, the most popular game title in the dataset. A few strong themes quickly stand out. Words like “cheaters,” “Valve,” “time,” and “play” dominate the discussion, pointing to both the game's popularity and common frustrations. While some players express positive feelings with words like “thank,” “love,” and “fun,” others vent through terms like “broken,” “trash,” and “VAC.” This mix shows how competitive games can be both fun and frustrating, which can lead players to keep coming back.
+
+
 
 ```{python}
 
@@ -847,6 +847,15 @@ plt.show()
 
 ```
 
+
+Similarly, @fig-wordcloud2 breaks down player sentiments for PUBG: Battlegrounds, another popular game title. The emphasis on words like “fun,” “good,” “free,” and “recommend” suggest a generally positive experience. However, negative terms such as “cheaters,” “broken,” “stop,” and “unplayable” also appear frequently. These reflect common complaints about technical issues including lag, server instability, and internet provider (ISP) problems. All of this can seriously impact the multiplayer experience. And this shows even widely loved games aren’t immune to frustration.
+
+Together, these insights suggest that sentiment and addiction aren’t always negatively correlated—players can be highly engaged and still critical. But the intensity and frequency of feedback from addicted players may signal stronger emotional investment in the game experience.
+
+Together, these insights show that being addicted doesn’t always mean loving a game unconditionally. Players can be very engaged and still have complaints. But the strong and frequent feedback from addicted users might reflect a deeper emotional connection to the game.
+
+
+
 # Predicting Gaming Addiction
 
 After exploring trends in playtime, game design, and genre preferences, the next  step is to see if we could predict gaming addiction using machine learning.
@@ -865,9 +874,6 @@ Using the dropdown, you can check out the chart below to view how each model per
 :::
 
 
-
-
-
 ```{python}
 
 #| label: fig-metrics
@@ -879,33 +885,20 @@ import plotly.graph_objects as go
 # Define model names and metrics
 models = ["Logistic Regression", "XGBoost", "KNN", "Bagging", "Decision Tree", "SVM"]
 
-# Scores for "Not Addicted" and "Addicted"
-scores = {
-    "Logistic Regression": {
-        "Not Addicted": [0.8101, 0.7467, 0.7771],
-        "Addicted": [0.7647, 0.8246, 0.7935]
-    },
-    "XGBoost": {
-        "Not Addicted": [0.8611, 0.7616, 0.8083],
-        "Addicted": [0.7860, 0.8769, 0.8289]
-    },
-    "KNN": {
-        "Not Addicted": [0.7559, 0.6574, 0.7032],
-        "Addicted": [0.6964, 0.7873, 0.7391]
-    },
-    "Bagging": {
-        "Not Addicted": [0.8236, 0.7654, 0.7934],
-        "Addicted": [0.7805, 0.8358, 0.8072]
-    },
-    "Decision Tree": {
-        "Not Addicted": [0.8704, 0.7002, 0.7761],
-        "Addicted": [0.7488, 0.8955, 0.8156]
-    },
-    "SVM": {
-        "Not Addicted": [0.8095, 0.7281, 0.7667],
-        "Addicted": [0.7525, 0.8283, 0.7886] 
-    }
-}
+
+df = pd.read_csv("../results/classifier_metrics.csv")
+# let's get the scores from the result
+scores = {}
+
+# Iterate over rows
+for _, row in df.iterrows():
+    model = row['Model']
+    cls = row['Class']
+    metrics = [round(row['precision'], 4), round(row['recall'], 4), round(row['f1-score'], 4)]
+    
+    if model not in scores:
+        scores[model] = {}
+    scores[model][cls] = metrics
 
 # Initialize the first model (XGBoost) as default
 initial_model = "XGBoost"
@@ -973,33 +966,8 @@ Now that we know XGBoost performs best, let's take a closer look at which featur
 import pandas as pd
 import plotly.express as px
 
-# Top 10 features and importance scores
-feature_data = pd.DataFrame({
-    "Feature": [
-        "game_count",
-        "developer_Aurora Studio",
-        "number_of_reviews",
-        "genre_Casual",
-        "genre_Action",
-        "genre_Action, Adventure, Indie",
-        "publisher_Slitherine Ltd.",
-        "max_concurrent_players",
-        "publisher_Valve",
-        "publisher_Team17"
-    ],
-    "Importance": [
-        0.028460,
-        0.022018,
-        0.021947,
-        0.019471,
-        0.019317,
-        0.018006,
-        0.016553,
-        0.014739,
-        0.014415,
-        0.013994
-    ]
-})
+
+feature_data = pd.read_csv("../results/xgfeatures.csv")
 
 # Create interactive horizontal bar chart
 fig = px.bar(
