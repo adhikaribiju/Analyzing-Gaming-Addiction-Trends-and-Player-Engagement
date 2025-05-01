@@ -62,11 +62,14 @@ reviews_data = pd.read_csv("../data/reviews.csv")
 
 ## Data Sources
 
-For this project, I chose Steam as the source of data due to its large user base, extensive game catalog, and publicly accessible API. Two main datasets were extracted using the Steam Web API specifically using the **ISteamApps/GetAppList** and **IPlayerService/GetOwnedGames** endpoints:  
+For this project, I chose Steam as the source of data due to its large user base, extensive game catalog, and publicly accessible API. 
 
-- **`steam_game_data.csv`** : This dataset contains detailed information about 91,690 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
+For this project, I chose Steam as the data source because of its large user base, diverse game catalog, and publicly accessible API. Getting the data required some patience. Steam’s API has request limits, so I had to write a script that moved slowly to find public profiles, checking their games, and logging playtime details over thousands of users randomly generated.
 
-- **`user_playtime_data.csv`** : This dataset consists of 66,187 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information. Each user (`user_id`) can have multiple games (`game_id`) associated with their account.  
+- **`steam_game_data.csv`** : This dataset contains detailed information about 90,000 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
+
+- **`user_playtime_data.csv`** : This dataset consists of over 90,000 player-specific data, capturing metrics like total playtime, recent playtime, and game ownership information.
+
 
 Below you can find the Python script written to download the data. For the player data, the script generates a number of random Steam user IDs. For each valid public profile matching the user ID, the script retrieves information such as the number of games owned and the total and recent playtime.
 
@@ -242,6 +245,9 @@ print("Data collection complete. Saved to 'games_data.csv'")
 
 ```
 
+::: {.callout-tip title="Why random IDs?"}
+Since Steam doesn’t provide a direct way to list all public profiles, the script generates random user IDs and checks each one to see if it matches a valid public profile.
+:::
 
 
 ## Data Preparation
@@ -480,7 +486,7 @@ fig = px.imshow(
     corr_matrix,
     text_auto=True,
     color_continuous_scale="RdBu_r",
-    title="Correlation Between Game Design Elements and Playtime",
+    title="Pearson Correlation Between Game Design Elements and Playtime",
     aspect="auto"
 )
 
@@ -498,15 +504,14 @@ fig.show()
 
 Observe the heatmap above (@fig-heatmap) that shows how different game design elements relate to long-term playtime. 
 
-One of the strongest correlations shows up with **multiplayer support**. The games that let people play together, whether cooperatively or competitively, tend to create a more social and engaging experience. Titles like *Counter-Strike: Global Offensive*, *Dota 2*, or *Valorant* are popular multiplayer games. Not only can you can team up with friends but you can also go head-to-head with strangers. This social side of these games can turn a quick session into a regular habit.
 
+One of the strongest correlations shows up with **maximum concurrent players** *(0.29). This probably has a lot to do with the size and popularity of certain games. Titles like *PUBG*, *Rust*, or *ARK: Survival Evolved* are built for large-scale multiplayer, where you enter into a world with lots of other players. The more people there are online, the more unpredictable and exciting each session becomes. No two matches feel the same, and that variety can really keep players coming back.
 
-**Maximum concurrent players** also shows a strong positive correlation. This probably has a lot to do with the size and popularity of certain games. Titles like *PUBG*, *Rust*, or *ARK: Survival Evolved* are built for large-scale multiplayer, where you enter into a world with lots of other players. The more people there are online, the more unpredictable and exciting each session becomes. No two matches feel the same, and that variety can really keep players coming back.
+**Multiplayer support** *(0.22)* also shows a strong positive correlation. The games that let people play together, whether cooperatively or competitively, tend to create a more social and engaging experience. Titles like *Counter-Strike: Global Offensive*, *Dota 2*, or *Valorant* are popular multiplayer games. Not only can you can team up with friends but you can also go head-to-head with strangers. This social side of these games can turn a quick session into a regular habit.
 
+The number of **downloadable content packs or DLCs**  *(0.20)* also appears to play a role. Games like *The Sims 4* or *Cities: Skylines* frequently release DLCs that expand gameplay, add new mechanics, or refresh the visual experience. Players likley find it fun to explore new contents that can be added over time which makes them stick aroung longer.
 
-The number of **downloadable content packs (DLCs)** also appears to play a role. Games like *The Sims 4* or *Cities: Skylines* frequently release DLCs that expand gameplay, add new mechanics, or refresh the visual experience. Players likley find it fun to explore new contents that can be added over time which makes them stick aroung longer.
-
-Interestingly, **average review scores** also correlate positively with playtime, but to a lesser degree. While good reviews may attract players initially, they don’t seem to keep players engaged in the same way that gameplay mechanics and social features do. 
+Interestingly, **average review scores**  *(0.06)* also correlate positively with playtime, but to a lesser degree. While good reviews may attract players initially, they don’t seem to keep players engaged in the same way that gameplay mechanics and social features do. 
 
 ###  Are Multiplayer Games More Addictive?
 
@@ -557,7 +562,7 @@ Since the $p$-value is extremely small ($p < 0.05$), we reject the null hypothes
 
 To explore this further, let's run t-tests to compare whether certain game features differ significantly between addicted and non-addicted players.
 
-::: {.callout-note title="Chi-Square Test Result"}
+::: {.callout-note title="T-Test Results"}
 ```{python}
 
 import pandas as pd
@@ -607,7 +612,7 @@ Altogether, these results back up what we saw earlier in the correlation heatmap
 
 
 
-## What Genres Are Most Engaging?
+### What Genres Are Most Engaging?
 
 To understand what types of games addicted and non-addicted users are spending time on, let's break down total playtime by game genre. The charts below compare the top five genres based on total playtime for each group.
 
@@ -867,12 +872,30 @@ The goal here is to build a model that can distinguish between users who are lik
 Below is a comparison of the top-performing models. 
 
 
+
+
+```{python}
+
+df_scores = pd.read_csv("../results/classifier_metrics.csv")
+
+df_scores = df_scores[['Model', 'Class', 'precision', 'recall', 'f1-score']]
+
+df_scores[['precision', 'recall', 'f1-score']] = df_scores[['precision', 'recall', 'f1-score']].round(3)
+
+
+# capitalize the columns header for displaying
+df_scores.columns = [col.capitalize() for col in df_scores.columns]
+
+df_scores
+
+```
+
+
 ::: {.callout-note}
 
 Using the dropdown, you can check out the chart below to view how each model performed.
 
 :::
-
 
 ```{python}
 
