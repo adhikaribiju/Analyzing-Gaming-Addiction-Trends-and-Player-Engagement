@@ -16,14 +16,14 @@ jupyter: python3
 ---
 
 
-![Screenshot from Grand Theft Auto V, one of the most popular games, capturing the iconic trio.](gta.jpg)
+![Screenshot from one of the most popular games, Grand Theft Auto V, capturing the iconic trio.](gta.jpg)
 
 
 Have you ever found yourself so immersed in a video game that hours passed without you even noticing? I’m sure many of us have. For me, it started with the game, Grand Theft Auto: Vice City. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games provided a fun, simple, and great way to relax. 
 
 Today, the gaming industry has transformed tremendously. Video games are more immersive, cinematic, and competitive than ever. Streamers and esports players are treated like celebrities, with huge fan bases following their every move. Video games have evolved as more than just a form of entertainment. They have become a way to express yourself, get inspired, and even explore future career options. However, with this rise comes a darker flip side, which is gaming addiction. As fun and exciting as games can be, excessive play can negatively impact mental health, productivity, and real-world relationships. Studies show that around 3-4% of gamers exhibit symptoms of gaming disorder, leading to anxiety, social withdrawal, and even depression in some cases [@pontes2021]. 
 
-This blog aims to take a closer look at where we stand today when it comes to gaming addiction. By using real-time data from the Steam library, one of the world’s largest gaming platforms, this project explores how frequently people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.
+This blog aims to take a closer look at where we stand today when it comes to gaming addiction. By using real-time data from [Steam](https://store.steampowered.com/) <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1920px-Steam_icon_logo.svg.png" alt="Steam Icon" width="20" height="20" />, one of the world’s largest gaming platforms, this project explores how frequently people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.
 
 
 
@@ -62,11 +62,11 @@ reviews_data = pd.read_csv("../data/reviews.csv")
 
 ## Data Sources
 
-For this project, I chose [Steam](https://store.steampowered.com/) <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1920px-Steam_icon_logo.svg.png" alt="Steam Icon" width="20" height="20" />, world’s largest gaming platform, as the source of data due to its large user base, extensive game catalog, and publicly accessible API. 
+For this project, I chose [Steam](https://store.steampowered.com/) <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1920px-Steam_icon_logo.svg.png" alt="Steam Icon" width="20" height="20" /> as the source of data due to its large user base, extensive game catalog, and publicly accessible API. 
 
 
 
- Getting the data required some patience. Steam’s API has request limits, so I had to write a script that moved slowly to find public profiles, checking their games, and logging playtime details over thousands of users randomly generated.
+ Getting the data required some patience. Steam’s API has request limits, so I had to write a script that moved slowly to find public profiles, checking their games, and logging playtime details over thousands of users randomly generated. Following are the two main datasets used for this project: 
 
 - **`steam_game_data.csv`** : This dataset contains detailed information about 90,000 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
 
@@ -453,7 +453,7 @@ Based on the 20 hours per week threshold, the results show that a significant ma
 
 **About 75.4%** of active users fall under **Casual Gamers**, meaning they play less than 7 hours per week. This suggests that most people use gaming as a light, recreational activity; something they enjoy in short sessions without making it a major part of their routine.
 
-**Moderate Gamers**, who play between 7 and 20 hours per week, make up **17.9%** of active users. This group shows healthy engagement, likely made up of people who play consistently but still manages to balance gaming with other parts of their lives.
+**Moderate Gamers**, who play between 7 and 20 hours per week, make up **17.9%** of active users. This group shows healthy engagement, likely made up of people who play consistently but still manage to balance gaming with other parts of their lives.
 
 Only **6.6%** of users fall into the **Potential Addiction** category, playing more than 20 hours per week. While this number is not insignificant, it does suggest that gaming addiction is not widespread in this dataset. The overall pattern shows that the majority of gamers engage in moderate or minimal play.
 
@@ -507,11 +507,11 @@ fig.show()
 Observe the heatmap above (@fig-heatmap) that shows how different game design elements relate to long-term playtime. 
 
 
-One of the strongest correlations shows up with **maximum concurrent players** *(0.29). This probably has a lot to do with the size and popularity of certain games. Titles like *PUBG*, *Rust*, or *ARK: Survival Evolved* are built for large-scale multiplayer, where you enter into a world with lots of other players. The more people there are online, the more unpredictable and exciting each session becomes. No two matches feel the same, and that variety can really keep players coming back.
+One of the strongest correlations shows up with **maximum concurrent players** *(0.29)*. This probably has a lot to do with the size and popularity of certain games. Titles like *PUBG*, *Rust*, or *ARK: Survival Evolved* are built for large-scale multiplayer, where you enter into a world with lots of other players. The more people there are online, the more unpredictable and exciting each session becomes. No two matches feel the same, and that variety can really keep players coming back.
 
 **Multiplayer support** *(0.22)* also shows a strong positive correlation. The games that let people play together, whether cooperatively or competitively, tend to create a more social and engaging experience. Titles like *Counter-Strike: Global Offensive*, *Dota 2*, or *Valorant* are popular multiplayer games. Not only can you can team up with friends but you can also go head-to-head with strangers. This social side of these games can turn a quick session into a regular habit.
 
-The number of **downloadable content packs or DLCs**  *(0.20)* also appears to play a role. Games like *The Sims 4* or *Cities: Skylines* frequently release DLCs that expand gameplay, add new mechanics, or refresh the visual experience. Players likley find it fun to explore new contents that can be added over time which makes them stick aroung longer.
+The number of **downloadable content packs or DLCs**  *(0.20)* also appears to play a role. Games like *The Sims 4* or *Cities: Skylines* frequently release DLCs that expand gameplay, add new mechanics, or refresh the visual experience. Players likely find it fun to explore new contents that can be added over time which makes them stick aroung longer.
 
 Interestingly, **average review scores**  *(0.06)* also correlate positively with playtime, but to a lesser degree. While good reviews may attract players initially, they don’t seem to keep players engaged in the same way that gameplay mechanics and social features do. 
 
@@ -859,9 +859,6 @@ Similarly, @fig-wordcloud2 breaks down player sentiments for PUBG: Battlegrounds
 
 Together, these insights suggest that sentiment and addiction aren’t always negatively correlated—players can be highly engaged and still critical. But the intensity and frequency of feedback from addicted players may signal stronger emotional investment in the game experience.
 
-Together, these insights show that being addicted doesn’t always mean loving a game unconditionally. Players can be very engaged and still have complaints. But the strong and frequent feedback from addicted users might reflect a deeper emotional connection to the game.
-
-
 
 # Predicting Gaming Addiction
 
@@ -1026,4 +1023,4 @@ fig.show(config={"displayModeBar": False})
 
 # Future Work
 
-There are lots of exciting possibilities and ideas for building on this work. One idea is be to apply more advanced neural networks, like RNNs or transformer models, to capture even deeper patterns in player behavior and push prediction accuracy even higher. Another is to use time series analysis to track how gaming habits change over time which could give a better picture of when and how addiction risks start to form. This approach would require downloading and tracking player data from the API over several months. Lastly, it would also be interesting to create dynamic, real-time dashboards to monitor gaming trends as they happen, making the data easier to explore. 
+There are lots of exciting possibilities and ideas for building on this work. One idea is to apply more advanced neural networks, like RNNs or transformer models, to capture even deeper patterns in player behavior and push prediction accuracy even higher. Another is to use time series analysis to track how gaming habits change over time which could give a better picture of when and how addiction risks start to form. This approach would require downloading and tracking player data from the API over several months. Lastly, it would also be interesting to create dynamic, real-time dashboards to monitor gaming trends as they happen, making the data easier to explore. 
