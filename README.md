@@ -5,6 +5,9 @@ This project explores patterns in video game engagement and addiction, using rea
 🔗 **Check out the interactive blog here:**  
 [Analyzing Gaming Addiction Trends and Player Engagement](https://adhikaribiju.github.io/capstone/blog.html)
 
+[Analyzing Gaming Addiction Trends and Player Engagement](https://adhikaribiju.github.io/capstone/blog.html)
+![Screenshot from one of the most popular games, Grand Theft Auto V, capturing the iconic trio.](docs/gta.jpg)
+
 ---
 
 ## 📂 Directory Structure
