@@ -16,7 +16,7 @@ jupyter: python3
 ---
 
 
-![Source: iStockPhoto](https://media.istockphoto.com/id/1132282499/photo/woman-playing-video-games.jpg?s=612x612&w=0&k=20&c=ljeQB2UiYW6fYNjAZONaCcdH1r7GPPE7SvXzQ5YJPMk=){fig-alt="A picture of a person indulged in video game."}
+![Screenshot from Grand Theft Auto V, one of the most popular games, capturing the iconic trio.](gta.jpg)
 
 
 Have you ever found yourself so immersed in a video game that hours passed without you even noticing? I’m sure many of us have. For me, it started with the game, Grand Theft Auto: Vice City. After school, I would sit down to play and quickly become absorbed in its open virtual world, filled with action, rich stories, and endless possibilities. It was my version of freedom. I could cruise through cities, outrun the police, complete missions, and later laugh about it with friends. Video games provided a fun, simple, and great way to relax. 
@@ -62,9 +62,11 @@ reviews_data = pd.read_csv("../data/reviews.csv")
 
 ## Data Sources
 
-For this project, I chose Steam as the source of data due to its large user base, extensive game catalog, and publicly accessible API. 
+For this project, I chose [Steam](https://store.steampowered.com/) <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1920px-Steam_icon_logo.svg.png" alt="Steam Icon" width="20" height="20" />, world’s largest gaming platform, as the source of data due to its large user base, extensive game catalog, and publicly accessible API. 
 
-For this project, I chose Steam as the data source because of its large user base, diverse game catalog, and publicly accessible API. Getting the data required some patience. Steam’s API has request limits, so I had to write a script that moved slowly to find public profiles, checking their games, and logging playtime details over thousands of users randomly generated.
+
+
+ Getting the data required some patience. Steam’s API has request limits, so I had to write a script that moved slowly to find public profiles, checking their games, and logging playtime details over thousands of users randomly generated.
 
 - **`steam_game_data.csv`** : This dataset contains detailed information about 90,000 games, including metadata such as the game title, developer, publisher, genre, release date, supported platforms, multiplayer support, graphics quality, story depth, and metrics like review scores and player engagement statistics.  
 
@@ -725,8 +727,8 @@ df_sentiments = pd.DataFrame({
 
 # Create grouped bar chart
 fig = go.Figure(data=[
-    go.Bar(name='Non-Addicted (Playtime < 40)', x=df_sentiments['Sentiment'], y=df_sentiments['Non-Addicted']),
-    go.Bar(name='Addicted (Playtime > 40)', x=df_sentiments['Sentiment'], y=df_sentiments['Addicted'])
+    go.Bar(name='Non-Addicted (Playtime < 20 hrs)', x=df_sentiments['Sentiment'], y=df_sentiments['Non-Addicted']),
+    go.Bar(name='Addicted (Playtime > 20 hrs)', x=df_sentiments['Sentiment'], y=df_sentiments['Addicted'])
 ])
 
 # Customize layout
@@ -876,6 +878,9 @@ Below is a comparison of the top-performing models.
 
 ```{python}
 
+#| label: tbl-metricsdata
+#| tbl-cap: "Precision, recall, and F1-score for models across user classes"
+
 df_scores = pd.read_csv("../results/classifier_metrics.csv")
 
 df_scores = df_scores[['Model', 'Class', 'precision', 'recall', 'f1-score']]
@@ -900,7 +905,7 @@ Using the dropdown, you can check out the chart below to view how each model per
 ```{python}
 
 #| label: fig-metrics
-#| fig-cap: " Precision, recall, and F1-score for differnt models across both addicted and non-addicted user classes."
+#| fig-cap: "Precision, recall, and F1-score for differnt models across both addicted and non-addicted user classes."
 
 
 import plotly.graph_objects as go
