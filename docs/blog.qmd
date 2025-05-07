@@ -25,7 +25,18 @@ Today, the gaming industry has transformed tremendously. Video games are more im
 
 This blog aims to take a closer look at where we stand today when it comes to gaming addiction. By using real-time data from [Steam](https://store.steampowered.com/) <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1920px-Steam_icon_logo.svg.png" alt="Steam Icon" width="20" height="20" />, one of the world’s largest gaming platforms, this project explores how frequently people play, what types of games they spend the most time on, and what patterns might point to addictive behavior.
 
+::: {.callout-note icon=false}
 
+## Research Questions
+
+* How much time are people spending on gaming per week?
+* What drives players to keep playing?
+* Are multiplayer games more addictive?
+* What genres are most engaging?
+* How does the sentiment of user reviews differ between addicted and non-addicted players?
+* Can we predict gaming addiction based on game features?
+
+:::
 
 ```{python}
 ## importing libraries
@@ -359,9 +370,6 @@ The **20-hour threshold** used in this analysis is based on findings from the *J
 
 :::
 
-
-
-
 While the histogram gives us a general sense of how often people play, it doesn't tell us much about **how** many users might be at risk. To get a clearer picture, users were categorized based on their weekly playtime.
 
 Let's break this down with a pie chart that groups active users into three categories:
@@ -515,7 +523,7 @@ The number of **downloadable content packs or DLCs**  *(0.20)* also appears to p
 
 Interestingly, **average review scores**  *(0.06)* also correlate positively with playtime, but to a lesser degree. While good reviews may attract players initially, they don’t seem to keep players engaged in the same way that gameplay mechanics and social features do. 
 
-###  Are Multiplayer Games More Addictive?
+###  Are multiplayer games more addictive?
 
 Let's investigate whether there's a relationship between multiplayer support and the likelihood of gaming addiction.
 
@@ -604,7 +612,7 @@ run_ttest('average_review_score', 'Average Review Score')
 ```
 :::
 
-The results show a clear difference in **DLC count** between the two groups. With a t-statistic of 3.99 and a $p$-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
+The results show a clear difference in **DLC(downloadable content packs) count** between the two groups. With a t-statistic of 3.99 and a $p$-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
 
 We can see a similar pattern with **maximum concurrent players**. The t-statistic came out to 3.91 with the same $p$-value, which suggests that addicted players tend to be more drawn to games with large, active communities. 
 
@@ -614,7 +622,7 @@ Altogether, these results back up what we saw earlier in the correlation heatmap
 
 
 
-### What Genres Are Most Engaging?
+### What genres are most engaging?
 
 To understand what types of games addicted and non-addicted users are spending time on, let's break down total playtime by game genre. The charts below compare the top five genres based on total playtime for each group.
 
@@ -702,7 +710,7 @@ Non-addicted players, on the other hand, spend most of their time on Action and 
 While both groups enjoy genres that offer action and adventure, addicted users lean more heavily into genres that demand tactical planning and problem-solving, like Strategy and RPGs. Non-addicted users appear to prefer more fast-paced and accessible experiences. 
 
 
-### Analyzing Gamers Sentiments
+### Analyzing Gamers' Sentiments
 
 
 In order to understand how players feel about the games they play, I conducted a sentiment analysis on user reviews using TextBlob, a natural language processing library that assigns polarity scores to text. Each review was categorized as Positive, Neutral, or Negative based on its sentiment polarity.
@@ -1017,7 +1025,7 @@ fig.show(config={"displayModeBar": False})
 
 
 #
- Interestingly, the number of games owned came out as the most influential feature, which makes sense since players who own a large library may be more engaged overall. Specific developers and publishers also played a role, with games from Aurora Studio, Valve, and Team17 showing up frequently among addicted users. Certain genres stood out too: titles labeled as Casual, Action, or hybrid genres like Action-Adventure-Indie carried significant weight in the model. The number of user reviews and maximum concurrent players were also important, suggesting that both popularity and social engagement may contribute to prolonged playtime. Overall, these features paint a picture of gaming addiction as a mix of player behavior, game design, and community-driven influence.
+ Interestingly, the number of games owned(game_count) came out as the most influential feature, which makes sense since players who own a large library may be more engaged overall. Specific developers and publishers also played a role, with games from Aurora Studio, Valve, and Team17 showing up frequently among addicted users. Certain genres stood out too: titles labeled as Casual, Action, or hybrid genres like Action-Adventure-Indie carried significant weight in the model. The number of user reviews(number_of_reviews) and maximum concurrent players(max_concurrent_players) were also important, suggesting that both popularity and social engagement may contribute to prolonged playtime. Overall, these features paint a picture of gaming addiction as a mix of player behavior, game design, and community-driven influence.
 
 
 
