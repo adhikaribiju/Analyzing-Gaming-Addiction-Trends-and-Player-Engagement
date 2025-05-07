@@ -370,7 +370,7 @@ The **20-hour threshold** used in this analysis is based on findings from the *J
 
 :::
 
-While the histogram gives us a general sense of how often people play, it doesn't tell us much about **how** many users might be at risk. To get a clearer picture, users were categorized based on their weekly playtime.
+While the histogram gives us a general sense of how often people play, it doesn't tell us much about **how many** users might be at risk. To get a clearer picture, users were categorized based on their weekly playtime.
 
 Let's break this down with a pie chart that groups active users into three categories:
 
@@ -570,7 +570,32 @@ Since the $p$-value is extremely small ($p < 0.05$), we reject the null hypothes
 
 #### Let’s Go Further: Looking at Other Game Features
 
-To explore this further, let's run t-tests to compare whether certain game features differ significantly between addicted and non-addicted players.
+To explore this further, let's run t-tests to compare whether certain game features (DLC count, maximum concurrent players, and average review score) differ significantly between addicted and non-addicted players.
+
+::: {.callout-note title="DLC Count"}
+- **Null Hypothesis (H₀):**  
+  There is no difference in the average number of DLCs between games played by addicted and non-addicted users.
+
+- **Alternative Hypothesis (H₁):**  
+  There is a difference in the average number of DLCs between games played by addicted and non-addicted users.
+:::
+
+::: {.callout-note title="Maximum Concurrent Players"}
+- **Null Hypothesis (H₀):**  
+  There is no difference in the average maximum concurrent players between games played by addicted and non-addicted users.
+
+- **Alternative Hypothesis (H₁):**  
+  There is a difference in the average maximum concurrent players between games played by addicted and non-addicted users.
+:::
+
+::: {.callout-note title="Average Review Score"}
+- **Null Hypothesis (H₀):**  
+  There is no difference in the average review score between games played by addicted and non-addicted users.
+
+- **Alternative Hypothesis (H₁):**  
+  There is a difference in the average review score between games played by addicted and non-addicted users.
+:::
+
 
 ::: {.callout-note title="T-Test Results"}
 ```{python}
@@ -612,7 +637,7 @@ run_ttest('average_review_score', 'Average Review Score')
 ```
 :::
 
-The results show a clear difference in **DLC(downloadable content packs) count** between the two groups. With a t-statistic of 3.99 and a $p$-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
+The results show a clear difference in **DLC (downloadable content packs) count** between the two groups. With a t-statistic of 3.99 and a $p$-value of 0.0001, it’s pretty clear that players who fall into the addicted category are more likely to play games that offer more downloadable content. 
 
 We can see a similar pattern with **maximum concurrent players**. The t-statistic came out to 3.91 with the same $p$-value, which suggests that addicted players tend to be more drawn to games with large, active communities. 
 
