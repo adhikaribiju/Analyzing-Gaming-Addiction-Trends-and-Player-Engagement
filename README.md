@@ -3,7 +3,7 @@
 This project explores patterns in video game engagement and addiction, using real-world player data and machine learning models to understand behavioral trends across various game types. The analysis includes sentiment evaluation, playtime patterns, and classification models to identify addictive tendencies.
 
 🔗 **Check out the interactive blog here:**  
-[Analyzing Gaming Addiction Trends and Player Engagement](https://adhikaribiju.github.io/capstone/blog.html)
+[Analyzing Gaming Addiction Trends and Player Engagement](https://adhikaribiju.github.io/Analyzing-Gaming-Addiction-Trends-and-Player-Engagement/blog.html)
 
 ![Screenshot from one of the most popular games, Grand Theft Auto V, capturing the iconic trio.](docs/gta.jpg)
 
